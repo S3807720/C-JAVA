@@ -21,6 +21,20 @@
  * spot!
  **/
 void reverse(char *string) {
+  int start,end,count = 0;
+  char stringrev[LINELEN+EXTRACHARS];
+  while(*string[count] != '\0') {
+    count++;
+  }
+  end = count - 2;
+  for ( start = 0; start < count; start++ ) {
+    stringrev[start] = *string[end];
+    end--;
+  }
+  normal_print("%s\n", stringrev);
+
+
+
 
 }
 

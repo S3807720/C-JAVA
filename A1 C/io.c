@@ -108,7 +108,10 @@ enum menu_choice display_menu(void) {
  * temporary types/etc, will change to appropriate during implementation of stage C
  **/
 void reverseString() {
-	normal_print("Reversed a string. Good job!\n");
+	char string[LINELEN+EXTRACHARS];
+	printf("Input a string: ");
+	fgets(string, LINELEN + EXTRACHARS, stdin);
+	reverse(&string);
 }
 void magicSquare() {
 	normal_print("Almost a magic square. Good job!\n");
