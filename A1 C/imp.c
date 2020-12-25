@@ -1,6 +1,6 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : s3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 1, study period 4, 2020.
@@ -20,7 +20,9 @@
  * what we started with. Be careful to keep the nul terminator in the right
  * spot!
  **/
-void reverse(char *string) {}
+void reverse(char *string) {
+
+}
 
 /**
  * the first of the two functions you need to do for the magic square
@@ -191,7 +193,7 @@ void knapsack_bruteforce_rec(struct item_list *select_from,
  **/
 struct item_list knapsack_bruteforce(const struct item_list *thelist, int max,
                                      enum category thecategory) {
-    struct item_list array_of_lists[MAX_ITEMS];
+    /*struct item_list array_of_lists[MAX_ITEMS];*/
     /* list you should return on error */
     struct item_list error_list;
     error_list.num_items = EOF;

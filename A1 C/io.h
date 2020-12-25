@@ -1,6 +1,6 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : s3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 1, study period 4, 2020.
@@ -22,12 +22,13 @@ enum menu_choice {
     MC_MAGSQ,
     MC_GR_KNAP,
     MC_BF_KNAP,
-    MC_QUIT,
-    MC_INVALID = -1
+    MC_QUIT = -1
 };
 
 /**
  * enumeration provided to you to return the result an input operation.
+ * these could've been incorporated into menu_choice
+ * to minimize the amount of redundant code...
  **/
 enum input_result { IR_FAILURE, IR_SUCCESS, IR_EOF = -1 };
 
@@ -35,6 +36,7 @@ enum input_result { IR_FAILURE, IR_SUCCESS, IR_EOF = -1 };
 #define EXTRACHARS 2
 
 enum menu_choice display_menu(void);
+
 int error_print(const char *format, ...);
 int normal_print(const char *format, ...);
 
@@ -45,5 +47,10 @@ int normal_print(const char *format, ...);
  * part 3 is to implement these function to handle the user input for each
  * function.
  **/
+
+void reverseString();
+void magicSquare();
+void greedyKnapsack();
+void recursiveKnapsack();
 
 #endif

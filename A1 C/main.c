@@ -1,6 +1,6 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : s3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 1, study period 4, 2020.
@@ -12,18 +12,40 @@
 #include "shared.h"
 
 int main(void) {
-    BOOLEAN quit = FALSE;
-    /* hints for what to do in main() */
-    /* have a loop that terminates when the user selects to exit the program */
-    /* call display menu to get the user's choice of what they want to do */
-    /* call the appropriate functions that handle user input in io.c */
-    /* pass the user input into the appropriate function where that actual
-     * option is implemented */
-    /* replace this return with a correct return value and delete this comment
-     */
-    while (quit == FALSE) {
-    	display_menu();
-    	quit = TRUE;
-    }
-    return EXIT_FAILURE;
+	BOOLEAN quit = FALSE;
+	/*
+	 * have placed welcome message here to stop the welcome spam with failed input.
+	 */
+	normal_print("Welcome to CPT220 Menu System\n");
+	normal_print("-----------------------------\n");
+	/* grab input and work with it here */
+	while (quit == FALSE) {
+		int input;
+		input = display_menu();
+		switch (input) {
+		case MC_REVERSE:
+			reverseString();
+			break;
+		case MC_MAGSQ:
+			magicSquare();
+			break;
+		case MC_GR_KNAP:
+			greedyKnapsack();
+			break;
+		case MC_BF_KNAP:
+			recursiveKnapsack();
+			break;
+		/* break loop and exit */
+		case MC_QUIT:
+			quit = TRUE;
+			break;
+		default:
+			error_print("Invalid number. Please select from the menu.\n");
+			quit = FALSE;
+			break;
+		}
+	}
+	normal_print(
+			"Goodbye! Thank you for using the CPT220 menu system... Alright, how do I close this.\n");
+	return EXIT_SUCCESS;
 }
