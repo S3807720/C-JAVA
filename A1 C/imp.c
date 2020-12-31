@@ -10,32 +10,23 @@
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "helpers.h"
 #include "io.h"
 
-/**
- * reverse a string inplace so that the order of letters is the opposite to
- * what we started with. Be careful to keep the nul terminator in the right
- * spot!
- **/
+
 void reverse(char *string) {
-  int start,end,count = 0;
-  char stringrev[LINELEN+EXTRACHARS];
-  while(*string[count] != '\0') {
-    count++;
-  }
-  end = count - 2;
-  for ( start = 0; start < count; start++ ) {
-    stringrev[start] = *string[end];
-    end--;
-  }
-  normal_print("%s\n", stringrev);
-
-
-
-
+	/* variables to swap the original string using pointers */
+	char *string_copy = string;
+	char *string_rev = string_copy + strlen(string_copy) - 1;
+	while (string_rev > string_copy) {
+		/* temp to store value where pointer is, rev to store reverse pointers*/
+		char temp = *string_rev;
+		*string_rev-- = *string_copy;
+		*string_copy++ = temp;
+	}
 }
 
 /**
@@ -45,10 +36,40 @@ void reverse(char *string) {
  * same thing.
  **/
 BOOLEAN square_init(square newsquare, const char *square_string,
-                    int side_width) {
-    /* delete this return statement and substitute with your own code and
-     * comments */
-    return FALSE;
+		int side_width) {
+	char *square_copy = strdup(square_string);
+	const char *delim = "';";
+	printf("square copy: %s\n", square_copy);
+	char *token, *end;
+	int i, num, j = 0;
+	for (; side_width  > i;) {
+		token = strtok(square_copy, delim);
+		num = (int) strtol(token, &end, 10);
+		newsquare[i][j] = num;
+		printf("%d \n", newsquare[i][j]);
+		j++;
+		token = strtok(NULL, delim);  // next token
+		if (j == side_width) {
+			j = 0;
+			i++;
+		}
+
+	}
+	/*
+	 * 1 1 1 1
+	 * 2 2 2 2
+	 * 3 3 3 3
+	 * 4 4 4 4
+	 * row * row count 00 10 20 30 40... 01 11 21 31
+	 * column * column count(eg 00, 01, 02, 03... 10 11 12..)
+	 *
+	 * top left to bottom right diagonal
+	 * row 00 11 22 33 44 (+1 to row and column count)
+	 *
+	 * bottom left to top right... start from 0 row, column variable is set to column length
+	 * then minus 1 to column variable, +1 to row variable. 0.4 1.3 2.2 3.1 4.0 etc
+	 *  */
+	return TRUE;
 }
 
 /**
@@ -56,9 +77,9 @@ BOOLEAN square_init(square newsquare, const char *square_string,
  * the totals for all columns, all rows and all diagonals are the same.
  **/
 BOOLEAN magicsquare_validate(square thesquare, int sidewidth) {
-    /* delete this comment and return statement and substitute with your own
-     * code and return statements */
-    return FALSE;
+	/* delete this comment and return statement and substitute with your own
+	 * code and return statements */
+	return FALSE;
 }
 
 /**
@@ -76,23 +97,23 @@ void itemlist_init(struct item_list *thelist) { thelist->num_items = 0; }
  * adds a new item to the item list given the data about the item.
  **/
 BOOLEAN itemlist_add(struct item_list *thelist, const char *itemname,
-                     int weight, int cost, int count) {
-    /* a pointer to where we will add a new item if we add it */
-    struct item *newitem = thelist->items + thelist->num_items;
+		int weight, int cost, int count) {
+	/* a pointer to where we will add a new item if we add it */
+	struct item *newitem = thelist->items + thelist->num_items;
 
-    /* we can't add more items than we have specified that a list can hold */
-    if (thelist->num_items == MAX_ITEMS) {
-        return FALSE;
-    }
-    /* copy in the data */
-    strcpy(newitem->name, itemname);
-    newitem->weight = weight;
-    newitem->cost = cost;
-    newitem->count = count;
-    /* increase the number of items */
-    thelist->num_items++;
-    thelist->total_items += count;
-    return TRUE;
+	/* we can't add more items than we have specified that a list can hold */
+	if (thelist->num_items == MAX_ITEMS) {
+		return FALSE;
+	}
+	/* copy in the data */
+	strcpy(newitem->name, itemname);
+	newitem->weight = weight;
+	newitem->cost = cost;
+	newitem->count = count;
+	/* increase the number of items */
+	thelist->num_items++;
+	thelist->total_items += count;
+	return TRUE;
 }
 
 /**
@@ -100,14 +121,14 @@ BOOLEAN itemlist_add(struct item_list *thelist, const char *itemname,
  * item list when you have already constructed an item and wish to pass that in
  **/
 BOOLEAN itemlist_add_item(struct item_list *thelist, struct item theitem) {
-    /* check that there is space in the list */
-    if (thelist->num_items == MAX_ITEMS) {
-        return FALSE;
-    }
-    /* insert the item at the end of the list */
-    thelist->items[thelist->num_items++] = theitem;
-    thelist->total_items += theitem.count;
-    return TRUE;
+	/* check that there is space in the list */
+	if (thelist->num_items == MAX_ITEMS) {
+		return FALSE;
+	}
+	/* insert the item at the end of the list */
+	thelist->items[thelist->num_items++] = theitem;
+	thelist->total_items += theitem.count;
+	return TRUE;
 }
 
 /* a function pointer to the function used to do the comparison which may be
@@ -115,11 +136,11 @@ BOOLEAN itemlist_add_item(struct item_list *thelist, struct item theitem) {
 typedef int (*comparator)(const struct item *, const struct item *);
 
 static int weight_cmp(const struct item *first, const struct item *second) {
-    return first->weight - second->weight;
+	return first->weight - second->weight;
 }
 
 int cost_cmp(const struct item *first, const struct item *second) {
-    return first->cost - second->cost;
+	return first->cost - second->cost;
 }
 
 /**
@@ -127,9 +148,9 @@ int cost_cmp(const struct item *first, const struct item *second) {
  * item list easier.
  **/
 static void item_swap(struct item *itema, struct item *itemb) {
-    struct item temp = *itema;
-    *itema = *itemb;
-    *itemb = temp;
+	struct item temp = *itema;
+	*itema = *itemb;
+	*itemb = temp;
 }
 
 /**
@@ -138,44 +159,44 @@ static void item_swap(struct item *itema, struct item *itemb) {
  * easier.
  **/
 static void knapsack_sort(struct item_list *thelist,
-                          enum category thecategory) {
-    comparator cmp;
-    int outer, inner;
-    /* category must be WEIGHT OR COST */
-    assert(thecategory == WEIGHT || thecategory == COST);
-    /* decide how we are going to compare items */
-    cmp = thecategory == COST ? cost_cmp : weight_cmp;
-    /* implement the bubble sort - there are two loops */
-    /* outer loop looks at each item and inner loop looks at all the subsequent
-     * items in the list. If they are larger than the current item then we
-     * swap them. The end result is sorting from largest to smallest
-     */
-    for (outer = 0; outer < thelist->num_items - 1; ++outer) {
-        for (inner = outer + 1; inner < thelist->num_items; ++inner) {
-            if (cmp(thelist->items + outer, thelist->items + inner) > 0) {
-                item_swap(thelist->items + outer, thelist->items + inner);
-            }
-        }
-    }
+		enum category thecategory) {
+	comparator cmp;
+	int outer, inner;
+	/* category must be WEIGHT OR COST */
+	assert(thecategory == WEIGHT || thecategory == COST);
+	/* decide how we are going to compare items */
+	cmp = thecategory == COST ? cost_cmp : weight_cmp;
+	/* implement the bubble sort - there are two loops */
+	/* outer loop looks at each item and inner loop looks at all the subsequent
+	 * items in the list. If they are larger than the current item then we
+	 * swap them. The end result is sorting from largest to smallest
+	 */
+	for (outer = 0; outer < thelist->num_items - 1; ++outer) {
+		for (inner = outer + 1; inner < thelist->num_items; ++inner) {
+			if (cmp(thelist->items + outer, thelist->items + inner) > 0) {
+				item_swap(thelist->items + outer, thelist->items + inner);
+			}
+		}
+	}
 }
 
 /**
  * this function implements the greedy version of the knapsack solution
  **/
 struct item_list knapsack_greedy(struct item_list *thelist, int max,
-                                 enum category thecategory) {
-    /* declare any variables you need up here */
-    /* error list I have defined that can be returned if an error occurs in
-     * this function and then you can check that the num_items field is EOF */
-    struct item_list error_list;
-    error_list.num_items = EOF;
-    knapsack_sort(thelist, thecategory);
-    /* implement the algorithm to always take the largest item given the
-     * criterion specified */
-    /* you need to create your own list and add items to it according to the
-     * greedy algorithm
-     */
-    return error_list;
+		enum category thecategory) {
+	/* declare any variables you need up here */
+	/* error list I have defined that can be returned if an error occurs in
+	 * this function and then you can check that the num_items field is EOF */
+	struct item_list error_list;
+	error_list.num_items = EOF;
+	knapsack_sort(thelist, thecategory);
+	/* implement the algorithm to always take the largest item given the
+	 * criterion specified */
+	/* you need to create your own list and add items to it according to the
+	 * greedy algorithm
+	 */
+	return error_list;
 }
 
 /**
@@ -189,13 +210,13 @@ struct item_list knapsack_greedy(struct item_list *thelist, int max,
  * easily break.
  **/
 void knapsack_bruteforce_rec(struct item_list *select_from,
-                             struct item_list *selected, int max, int current,
-                             enum category thecategory) {
-    /* select_from is the list of elements you can select from, selected is the
-     * list of items that have been selected for this branch of the recursion */
-    /* please note that current is the value of the metric of weight / cost
-     * so far
-     */
+		struct item_list *selected, int max, int current,
+		enum category thecategory) {
+	/* select_from is the list of elements you can select from, selected is the
+	 * list of items that have been selected for this branch of the recursion */
+	/* please note that current is the value of the metric of weight / cost
+	 * so far
+	 */
 }
 
 /**
@@ -206,13 +227,13 @@ void knapsack_bruteforce_rec(struct item_list *select_from,
  *selection.
  **/
 struct item_list knapsack_bruteforce(const struct item_list *thelist, int max,
-                                     enum category thecategory) {
-    /*struct item_list array_of_lists[MAX_ITEMS];*/
-    /* list you should return on error */
-    struct item_list error_list;
-    error_list.num_items = EOF;
-    /* return the best list (highest with the given category) of the lists we
-     * have found based on the recursive
-     * calls*/
-    return error_list;
+		enum category thecategory) {
+	/*struct item_list array_of_lists[MAX_ITEMS];*/
+	/* list you should return on error */
+	struct item_list error_list;
+	error_list.num_items = EOF;
+	/* return the best list (highest with the given category) of the lists we
+	 * have found based on the recursive
+	 * calls*/
+	return error_list;
 }

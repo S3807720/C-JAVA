@@ -43,6 +43,7 @@ int getInteger(int* integer) {
 		if (input[strlen(input) - 1] != '\n') {
 			error_print("Input was too long.\n");
 			clear_buffer();
+
 		} else {
 			/* replace \n with \0. */
 			input[strlen(input) - 1] = '\0';
@@ -97,7 +98,7 @@ enum menu_choice display_menu(void) {
 		return MC_QUIT;
 		break;
 	}
-	return 7;
+	return MC_DEFAULT;
 }
 
 /**
@@ -109,13 +110,76 @@ enum menu_choice display_menu(void) {
  **/
 void reverseString() {
 	char string[LINELEN+EXTRACHARS];
-	printf("Input a string: ");
-	fgets(string, LINELEN + EXTRACHARS, stdin);
-	reverse(&string);
+	int finished = FALSE;
+	do {
+		normal_print("Please enter your string(blank input sends back to menu):\n");
+		/* exit back to menu when blank or ctrl d is entered */
+		if (fgets(string, LINELEN + EXTRACHARS, stdin) == NULL || *string == '\n') {
+			normal_print("And back to the menu we go!\n");
+			return;
+		}
+
+		/* if input is too long, clear buffer  and try again*/
+		if (string[strlen(string) - 1] != '\n') {
+			error_print("Input was too long.\n");
+			clear_buffer();
+		} else {
+			/* replace \n with \0. */
+			string[strlen(string) - 1] = '\0';
+			/* change flag to end loop if everything's A-OK */
+			finished = TRUE;
+		}
+	} while (finished == FALSE);
+	reverse(string);
+	/* and print the changed string :) */
+	if (string[0] != '\0') {
+		normal_print("Reversed string is: %s\n", string);
+	}
+
 }
+
+
 void magicSquare() {
-	normal_print("Almost a magic square. Good job!\n");
+	char squareString[LINELEN + EXTRACHARS];
+	int errorCheck, side = 0;
+	int finished = FALSE;
+	normal_print("Please enter the number of sides. Must be between 1-40(blank input sends back to menu)\n");
+	while (side <= 0 || side > 40) {
+		errorCheck = getInteger(&side);
+		/* exit back to menu when blank or ctrl d is entered */
+		if (errorCheck == IR_EOF) {
+			normal_print("And back to the menu we go!\n");
+			return;
+		}
+		if (side <= 0 || side > 40) {
+			error_print("Input must be between 1 and 40\n");
+		}
+	}
+
+	while (finished == FALSE) {
+		normal_print("Please enter the numbers inside the magic square like this "
+				"depending on sides chosen: '4,4,4;4,4,4;4,4,4'.\n");
+		/* break loop if empty input */
+		if (fgets(squareString, LINELEN + EXTRACHARS, stdin) == NULL
+				|| *squareString == '\n') {
+			normal_print("Back to the menu we go!\n");
+			return;
+		}
+		/* if input is too long, clear buffer  and try again*/
+		if (squareString[strlen(squareString) - 1] != '\n') {
+			error_print("Input was too long.\n");
+			clear_buffer();
+		} else {
+			/* replace \n with \0. */
+			squareString[strlen(squareString) - 1] = '\0';
+			/* change flag to end loop if everything's A-OK */
+			finished = TRUE;
+		}
+	}
+	int square[side][side];
+	int confirm = square_init(square, squareString, side);
 }
+
 void greedyKnapsack() {
 	normal_print("A greedy knapsack problem. Good job!\n");
 }

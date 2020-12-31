@@ -35,7 +35,7 @@ int main(void) {
 		case MC_BF_KNAP:
 			recursiveKnapsack();
 			break;
-		/* break loop and exit */
+			/* break loop and exit */
 		case MC_QUIT:
 			quit = TRUE;
 			break;
@@ -46,6 +46,6 @@ int main(void) {
 		}
 	}
 	normal_print(
-			"Goodbye! Thank you for using the CPT220 menu system... Alright, how do I close this.\n");
+			"Goodbye! Thank you for using the CPT220 menu system.\n");
 	return EXIT_SUCCESS;
 }

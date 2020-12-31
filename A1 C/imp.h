@@ -15,16 +15,16 @@
 typedef int square[SQUARE_SIDE][SQUARE_SIDE];
 enum category { NONE, WEIGHT, COST };
 struct item {
-    char name[NAMELEN + 1];
-    int weight;
-    int cost;
-    int count;
+	char name[NAMELEN + 1];
+	int weight;
+	int cost;
+	int count;
 };
 
 struct item_list {
-    int num_items;
-    int total_items;
-    struct item items[MAX_ITEMS];
+	int num_items;
+	int total_items;
+	struct item items[MAX_ITEMS];
 };
 
 void reverse(char *);
@@ -34,5 +34,5 @@ void itemlist_init(struct item_list *);
 BOOLEAN itemlist_add(struct item_list *, const char *, int, int, int);
 struct item_list knapsack_greedy(struct item_list *, int, enum category);
 struct item_list knapsack_bruteforce(const struct item_list *, int,
-                                     enum category);
+		enum category);
 #endif

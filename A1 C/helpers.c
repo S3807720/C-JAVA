@@ -24,5 +24,6 @@ char *strdup(const char *orig) {
     }
     /* copy the string */
     strcpy(copy, orig);
+    printf("helpers method : %s\n", copy);\
     return copy;
 }

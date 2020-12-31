@@ -18,11 +18,13 @@
  * very difficult to maintain.
  **/
 enum menu_choice {
-    MC_REVERSE,
-    MC_MAGSQ,
-    MC_GR_KNAP,
-    MC_BF_KNAP,
-    MC_QUIT = -1
+	MC_REVERSE,
+	MC_MAGSQ,
+	MC_GR_KNAP,
+	MC_BF_KNAP,
+	/* a default return for failed input */
+	MC_DEFAULT,
+	MC_QUIT = -1
 };
 
 /**
@@ -37,6 +39,7 @@ enum input_result { IR_FAILURE, IR_SUCCESS, IR_EOF = -1 };
 
 enum menu_choice display_menu(void);
 
+int getInteger(int* integer);
 int error_print(const char *format, ...);
 int normal_print(const char *format, ...);
 
