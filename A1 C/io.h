@@ -36,9 +36,11 @@ enum input_result { IR_FAILURE, IR_SUCCESS, IR_EOF = -1 };
 
 #define LINELEN 80
 #define EXTRACHARS 2
+/* 40*40 *4 should be enough to cover any inputs for the square */
+#define SQUARELEN 6400
 
 enum menu_choice display_menu(void);
-
+int getString(char input[], int length);
 int getInteger(int* integer);
 int error_print(const char *format, ...);
 int normal_print(const char *format, ...);

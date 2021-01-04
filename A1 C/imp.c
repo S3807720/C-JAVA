@@ -15,7 +15,7 @@
 
 #include "helpers.h"
 #include "io.h"
-
+#define INT_MAX 2147483647
 
 void reverse(char *string) {
 	/* variables to swap the original string using pointers */
@@ -37,39 +37,59 @@ void reverse(char *string) {
  **/
 BOOLEAN square_init(square newsquare, const char *square_string,
 		int side_width) {
+	/* make a copy to destroy with tokens */
 	char *square_copy = strdup(square_string);
-	const char *delim = "';";
-	printf("square copy: %s\n", square_copy);
+	const char *delim = ",;";
 	char *token, *end;
-	int i, num, j = 0;
-	for (; side_width  > i;) {
-		token = strtok(square_copy, delim);
+	int i = 0, j = 0, num = 0, count = 0;
+	/* token to split up and add to each part of the square through loop */
+	token = strtok(square_copy, delim);
+	while(side_width > i && token != NULL) {
 		num = (int) strtol(token, &end, 10);
+		if (num == INT_MAX) {
+			error_print("An input entered is far too large. Must be below %d\n", INT_MAX);
+			return FALSE;
+		}
+		/* verify result. */
 		newsquare[i][j] = num;
-		printf("%d \n", newsquare[i][j]);
 		j++;
+		count++;
 		token = strtok(NULL, delim);  // next token
+		/* could just use another loop but this works just as well to reset until i = sides */
 		if (j == side_width) {
 			j = 0;
 			i++;
 		}
-
 	}
-	/*
-	 * 1 1 1 1
-	 * 2 2 2 2
-	 * 3 3 3 3
-	 * 4 4 4 4
-	 * row * row count 00 10 20 30 40... 01 11 21 31
-	 * column * column count(eg 00, 01, 02, 03... 10 11 12..)
-	 *
-	 * top left to bottom right diagonal
-	 * row 00 11 22 33 44 (+1 to row and column count)
-	 *
-	 * bottom left to top right... start from 0 row, column variable is set to column length
-	 * then minus 1 to column variable, +1 to row variable. 0.4 1.3 2.2 3.1 4.0 etc
-	 *  */
-	return TRUE;
+	/* test if the side count and inputs match up. if input count < side*side or not a multiple of it
+	 * reject and go back. */
+	if ((count % side_width) != 0 || count != side_width*side_width) {
+		error_print("Side count and input does not match.\n");
+		return FALSE;
+	}
+	i = 0;
+	/* print out the square */
+	normal_print("Your (hopefully magic) square: \n\n");
+	while(side_width > i) {
+		j = 0;
+		while(side_width > j) {
+			normal_print("%*d ",3, newsquare[i][j]);
+			j++;
+		}
+		normal_print("\n");
+		i++;
+	}
+	normal_print("\n");
+	/* send to validate whether it's magic or not! */
+	int mgsqCheck = magicsquare_validate(newsquare, side_width);
+	if (mgsqCheck == TRUE) {
+		normal_print("You have created an (almost) magic square!\n");
+		return TRUE;
+	}
+	else {
+		normal_print("Unfortunately you have failed at creating an (almost) magic square. :( \n");
+		return FALSE;
+	}
 }
 
 /**
@@ -77,9 +97,64 @@ BOOLEAN square_init(square newsquare, const char *square_string,
  * the totals for all columns, all rows and all diagonals are the same.
  **/
 BOOLEAN magicsquare_validate(square thesquare, int sidewidth) {
-	/* delete this comment and return statement and substitute with your own
-	 * code and return statements */
-	return FALSE;
+	int rowCount, colCount, sum, sumCheck;
+	int diagCheck = sidewidth -1;
+	sumCheck = 0, sum = 0;
+	for (rowCount = 0; sidewidth > rowCount; rowCount++) {
+		sum += thesquare[rowCount][0];
+	}
+	/* check columns */
+	/* these work by setting the loop to increment the other counter
+	 * and once that counter hits side length, it'll increment the main one
+	 * allowing it to loop through all rows, all columns etc.
+	 */
+	for (rowCount = 0, colCount = 0; sidewidth > colCount; rowCount++) {
+		if(rowCount == sidewidth) {
+			if (sumCheck != sum) {
+				return FALSE;
+			}
+			sumCheck = 0;
+			colCount++;
+			rowCount = 0;
+		}
+		if (sidewidth > colCount) {
+			sumCheck += thesquare[rowCount][colCount];
+		}
+	}
+	sumCheck = 0;
+	/* check rows */
+	for (rowCount = 0, colCount = 0; sidewidth > rowCount; colCount++) {
+		if(colCount == sidewidth) {
+			if (sumCheck != sum) {
+				return FALSE;
+			}
+			sumCheck = 0;
+			rowCount++;
+			colCount = 0;
+		}
+		if (sidewidth > rowCount) {
+			sumCheck += thesquare[rowCount][colCount];
+		}
+	}
+	sumCheck = 0;
+	/* finally check diagonals
+	 * start from 0 and increment each by 1. 00, 11, 22, 33...*/
+	for (rowCount = 0, colCount = 0; sidewidth > colCount; rowCount++, colCount++) {
+		sumCheck += thesquare[rowCount][colCount];
+	}
+	if (sumCheck != sum) {
+		return FALSE;
+	}
+	sumCheck = 0;
+	/* and other diagonal
+	 * start from opposite end. eg 30, 21, 12, 03*/
+	for (colCount = diagCheck, rowCount = 0; sidewidth > rowCount; rowCount++, colCount--) {
+		sumCheck += thesquare[rowCount][colCount];
+	}
+	if (sumCheck != sum) {
+		return FALSE;
+	}
+	return TRUE;
 }
 
 /**

@@ -37,6 +37,7 @@ int getInteger(int* integer) {
 		/* send EOF flag when empty/eof detected */
 		if (fgets(input, LINELEN + EXTRACHARS, stdin) == NULL
 				|| *input == '\n') {
+			normal_print("And back to the menu we go!\n");
 			return IR_EOF;
 		}
 		/* if input is too long, clear buffer  and try again*/
@@ -61,6 +62,29 @@ int getInteger(int* integer) {
 	} while (finished == FALSE);
 	/* set menu choice thru pointer */
 	*integer = int_result;
+	return IR_SUCCESS;
+}
+
+int getString(char input[], int length) {
+	int finished = FALSE;
+	do {
+		normal_print("Please enter your string(blank input sends back to menu):\n");
+		/* exit back to menu when blank or ctrl d is entered */
+		if (fgets(input, length, stdin) == NULL || *input == '\n') {
+			normal_print("And back to the menu we go!\n");
+			return IR_EOF;
+		}
+		/* if input is too long, clear buffer  and try again*/
+		if (input[strlen(input) - 1] != '\n') {
+			error_print("Input was too long.\n");
+			clear_buffer();
+		} else {
+			/* replace \n with \0. */
+			input[strlen(input) - 1] = '\0';
+			/* change flag to end loop if everything's A-OK */
+			finished = TRUE;
+		}
+	} while (finished == FALSE);
 	return IR_SUCCESS;
 }
 
@@ -110,26 +134,10 @@ enum menu_choice display_menu(void) {
  **/
 void reverseString() {
 	char string[LINELEN+EXTRACHARS];
-	int finished = FALSE;
-	do {
-		normal_print("Please enter your string(blank input sends back to menu):\n");
-		/* exit back to menu when blank or ctrl d is entered */
-		if (fgets(string, LINELEN + EXTRACHARS, stdin) == NULL || *string == '\n') {
-			normal_print("And back to the menu we go!\n");
-			return;
-		}
-
-		/* if input is too long, clear buffer  and try again*/
-		if (string[strlen(string) - 1] != '\n') {
-			error_print("Input was too long.\n");
-			clear_buffer();
-		} else {
-			/* replace \n with \0. */
-			string[strlen(string) - 1] = '\0';
-			/* change flag to end loop if everything's A-OK */
-			finished = TRUE;
-		}
-	} while (finished == FALSE);
+	int errCheck = getString(string, LINELEN+EXTRACHARS);
+	if (errCheck == IR_EOF) {
+		return;
+	}
 	reverse(string);
 	/* and print the changed string :) */
 	if (string[0] != '\0') {
@@ -138,50 +146,76 @@ void reverseString() {
 
 }
 
-
 void magicSquare() {
-	char squareString[LINELEN + EXTRACHARS];
 	int errorCheck, side = 0;
-	int finished = FALSE;
 	normal_print("Please enter the number of sides. Must be between 1-40(blank input sends back to menu)\n");
 	while (side <= 0 || side > 40) {
 		errorCheck = getInteger(&side);
 		/* exit back to menu when blank or ctrl d is entered */
 		if (errorCheck == IR_EOF) {
-			normal_print("And back to the menu we go!\n");
 			return;
 		}
 		if (side <= 0 || side > 40) {
 			error_print("Input must be between 1 and 40\n");
 		}
 	}
-
-	while (finished == FALSE) {
-		normal_print("Please enter the numbers inside the magic square like this "
-				"depending on sides chosen: '4,4,4;4,4,4;4,4,4'.\n");
-		/* break loop if empty input */
-		if (fgets(squareString, LINELEN + EXTRACHARS, stdin) == NULL
-				|| *squareString == '\n') {
-			normal_print("Back to the menu we go!\n");
-			return;
-		}
-		/* if input is too long, clear buffer  and try again*/
-		if (squareString[strlen(squareString) - 1] != '\n') {
-			error_print("Input was too long.\n");
-			clear_buffer();
-		} else {
-			/* replace \n with \0. */
-			squareString[strlen(squareString) - 1] = '\0';
-			/* change flag to end loop if everything's A-OK */
-			finished = TRUE;
-		}
+	char squareString[SQUARELEN];
+	normal_print("You entered %d as the # of sides. "
+			"Please enter a number in this format.(2 sides: '2,2;2,2')\n", side);
+	/* not worth it to enforce ,;. so it'll just fail the checks later for invalid numbers
+	 * and send the user back */
+	int errCheck = getString(squareString, SQUARELEN);
+	if (errCheck == IR_EOF) {
+		return;
 	}
 	int square[side][side];
-	int confirm = square_init(square, squareString, side);
+	square_init(square, squareString, side);
 }
 
 void greedyKnapsack() {
-	normal_print("A greedy knapsack problem. Good job!\n");
+	int weight = 0, cost = 0, count = 0, bagCapacity = 0, i = 0, errCheck;
+	char category = '5';
+	char itemName[LINELEN+EXTRACHARS];
+	normal_print("Please enter the category you will use, either 'w' for weight"
+			" or 'c' for cost.\n");
+	normal_print("This category will be used to select what goes in the knapsack. \n");
+	/* getc is easier to error detect than reusing the string for a single char
+	 * and does not add too much code bloat */
+	do {
+		category = getc(stdin);
+		clear_buffer();
+	}while (!(category == 'c' || category == 'w'));
+
+	printf("%c\n", category);
+	normal_print("Please enter the maximum number of items the knapsack can have: \n");
+	errCheck = getInteger(&bagCapacity);
+	while (bagCapacity > i && errCheck != IR_EOF) {
+		normal_print("Please enter the details for an item to add to the knapsack. When "
+					"you are done, press enter on a newline or ctrl-D to exit this input "
+					"process.\n");
+		normal_print("Please enter the name of this item: \n");
+		errCheck = getString(itemName, LINELEN+EXTRACHARS);
+		if (errCheck == IR_EOF) {
+			return;
+		}
+		normal_print("Please enter the weight for this item as a whole number: \n");
+		errCheck = getInteger(&weight);
+		if (errCheck == IR_EOF) {
+			return;
+		}
+		normal_print("Please enter the cost for this item as a whole number: \n");
+		errCheck = getInteger(&cost);
+		if (errCheck == IR_EOF) {
+			return;
+		}
+		normal_print("Please enter the number of this item we will have: \n");
+		errCheck = getInteger(&count);
+		i++;
+	}
+	if (errCheck == IR_EOF) {
+		normal_print("And back to the menu we go!\n");
+		return;
+	}
 }
 void recursiveKnapsack() {
 	normal_print("Brute forced a recursive knapsack solution. Good job!\n");
