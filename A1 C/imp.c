@@ -23,7 +23,8 @@ void reverse(char *string) {
 	char *string_rev = string_copy + strlen(string_copy) - 1;
 	while (string_rev > string_copy) {
 		/* temp to store value where pointer is, rev to store reverse pointers*/
-		char temp = *string_rev;
+		char temp;
+		temp = *string_rev;
 		*string_rev-- = *string_copy;
 		*string_copy++ = temp;
 	}
@@ -41,7 +42,8 @@ BOOLEAN square_init(square newsquare, const char *square_string,
 	char *square_copy = strdup(square_string);
 	const char *delim = ",;";
 	char *token, *end;
-	int i = 0, j = 0, num = 0, count = 0;
+	int i, j, num, count;
+	i = 0, j = 0, num = 0, count = 0;
 	/* token to split up and add to each part of the square through loop */
 	token = strtok(square_copy, delim);
 	while(side_width > i && token != NULL) {
@@ -97,8 +99,8 @@ BOOLEAN square_init(square newsquare, const char *square_string,
  * the totals for all columns, all rows and all diagonals are the same.
  **/
 BOOLEAN magicsquare_validate(square thesquare, int sidewidth) {
-	int rowCount, colCount, sum, sumCheck;
-	int diagCheck = sidewidth -1;
+	int rowCount, colCount, sum, sumCheck, diagCheck;
+	diagCheck = sidewidth -1;
 	sumCheck = 0, sum = 0;
 	for (rowCount = 0; sidewidth > rowCount; rowCount++) {
 		sum += thesquare[rowCount][0];
@@ -260,17 +262,65 @@ static void knapsack_sort(struct item_list *thelist,
  **/
 struct item_list knapsack_greedy(struct item_list *thelist, int max,
 		enum category thecategory) {
-	/* declare any variables you need up here */
+	/* loop counter and value to keep track of greedy capacity */
+	int i, greedyCounter;
+	printf("%d max \n", max);
+	greedyCounter = max;
 	/* error list I have defined that can be returned if an error occurs in
 	 * this function and then you can check that the num_items field is EOF */
 	struct item_list error_list;
 	error_list.num_items = EOF;
 	knapsack_sort(thelist, thecategory);
-	/* implement the algorithm to always take the largest item given the
-	 * criterion specified */
-	/* you need to create your own list and add items to it according to the
-	 * greedy algorithm
-	 */
+	/* greedy bag to store priority values */
+	struct item_list greedyList;
+	itemlist_init(&greedyList);
+	/* loop until greedy counter is 0
+	 * as the bag has been sorted, can go through the
+	 * general item list from position 0*/
+	for (i = 0; greedyCounter > 0; i++) {
+		printf("starting loop of greedy add\n total count: %d\n", thelist->total_items);
+		/* or and insufficient amount of items for capacity will
+		 * add all available and end counter. */
+		if (greedyCounter > thelist->total_items) {
+			printf("greedy loop 2\n");
+			itemlist_add_item(&greedyList, thelist->items[i]);
+			greedyCounter = 0;
+		}
+		/* otherwise we have to copy the item values over and use greedy counter
+		 * also setting counter to 0 as it's lower than item count */
+		else if (thelist->items[i].count > greedyCounter) {
+			printf("greedy loop 3\n");
+			itemlist_add(&greedyList, thelist->items[i].name, thelist->items[i].weight,
+					thelist->items[i].cost, greedyCounter);
+			greedyCounter = 0;
+		}
+		/* if greedy counter is higher, use the item count */
+		else if (greedyCounter >= thelist->items[i].count) {
+			printf("greedy loop 1\n");
+			itemlist_add_item(&greedyList, thelist->items[i]);
+			greedyCounter -= thelist->items[i].count;
+		}
+		else {
+			normal_print("This isn't meant to execute..\n");
+		}
+	}
+	if (thecategory == WEIGHT) {
+		normal_print("The items in the knapsack are prioritized by least weight.\n");
+	}
+	if (thecategory == COST) {
+		normal_print("The items in the knapsack are prioritized by least cost.\n");
+	}
+	/* print through greedy bag */
+	normal_print("The items in the greedy knapsack are: \n");
+	for (i = 0; greedyList.num_items > i; i++) {
+		normal_print("greedy list: Item: %s, Weight: %d Cost: %d Count: %d\n", greedyList.items[i].name,
+				greedyList.items[i].weight, greedyList.items[i].cost, greedyList.items[i].count);
+	}
+	normal_print("The complete item list is: \n");
+	for (i = 0; thelist->num_items > i; i++) {
+		normal_print("normal list: Item: %s, Weight: %d Cost: %d Count: %d\n", thelist->items[i].name,
+				thelist->items[i].weight,thelist->items[i].cost, thelist->items[i].count);
+	}
 	return error_list;
 }
 

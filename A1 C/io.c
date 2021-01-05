@@ -37,7 +37,6 @@ int getInteger(int* integer) {
 		/* send EOF flag when empty/eof detected */
 		if (fgets(input, LINELEN + EXTRACHARS, stdin) == NULL
 				|| *input == '\n') {
-			normal_print("And back to the menu we go!\n");
 			return IR_EOF;
 		}
 		/* if input is too long, clear buffer  and try again*/
@@ -71,7 +70,6 @@ int getString(char input[], int length) {
 		normal_print("Please enter your string(blank input sends back to menu):\n");
 		/* exit back to menu when blank or ctrl d is entered */
 		if (fgets(input, length, stdin) == NULL || *input == '\n') {
-			normal_print("And back to the menu we go!\n");
 			return IR_EOF;
 		}
 		/* if input is too long, clear buffer  and try again*/
@@ -96,7 +94,8 @@ enum menu_choice display_menu(void) {
 	normal_print("3) Greedy knapsack solution\n");
 	normal_print("4) Recursive bruteforce knapsack solution\n");
 	normal_print("5) Exit the program\n");
-	int input = 0;
+	int input;
+	input = 0;
 	/* check for any errors, EOF. otherwise send to switch */
 	int errorCheck = getInteger(&input);
 	if (errorCheck == IR_EOF) {
@@ -136,6 +135,7 @@ void reverseString() {
 	char string[LINELEN+EXTRACHARS];
 	int errCheck = getString(string, LINELEN+EXTRACHARS);
 	if (errCheck == IR_EOF) {
+		normal_print("And back to the menu we go!\n");
 		return;
 	}
 	reverse(string);
@@ -153,6 +153,7 @@ void magicSquare() {
 		errorCheck = getInteger(&side);
 		/* exit back to menu when blank or ctrl d is entered */
 		if (errorCheck == IR_EOF) {
+			normal_print("And back to the menu we go!\n");
 			return;
 		}
 		if (side <= 0 || side > 40) {
@@ -166,6 +167,7 @@ void magicSquare() {
 	 * and send the user back */
 	int errCheck = getString(squareString, SQUARELEN);
 	if (errCheck == IR_EOF) {
+		normal_print("And back to the menu we go!\n");
 		return;
 	}
 	int square[side][side];
@@ -173,50 +175,74 @@ void magicSquare() {
 }
 
 void greedyKnapsack() {
-	int weight = 0, cost = 0, count = 0, bagCapacity = 0, i = 0, errCheck;
-	char category = '5';
+	int weight, cost, count, bagCapacity, errCheck, itemCounter;
+	/* counter to track whether item is added */
+	itemCounter = 0;
+	char category;
 	char itemName[LINELEN+EXTRACHARS];
 	normal_print("Please enter the category you will use, either 'w' for weight"
 			" or 'c' for cost.\n");
 	normal_print("This category will be used to select what goes in the knapsack. \n");
 	/* getc is easier to error detect than reusing the string for a single char
-	 * and does not add too much code bloat */
+	 * and does not add too much code bloat. may not have had time to learn how
+	 * to detect EOF before submission.. */
 	do {
 		category = getc(stdin);
 		clear_buffer();
+		if (!(category == 'c' || category == 'w')) {
+			error_print("Input must be c or w.\n");
+		}
 	}while (!(category == 'c' || category == 'w'));
 
-	printf("%c\n", category);
 	normal_print("Please enter the maximum number of items the knapsack can have: \n");
 	errCheck = getInteger(&bagCapacity);
-	while (bagCapacity > i && errCheck != IR_EOF) {
+	if (errCheck == IR_EOF) {
+		normal_print("And back to the menu we go!\n");
+		return;
+	}
+	struct item_list itemList;
+	itemlist_init(&itemList);
+	while (errCheck != IR_EOF) {
 		normal_print("Please enter the details for an item to add to the knapsack. When "
 					"you are done, press enter on a newline or ctrl-D to exit this input "
 					"process.\n");
 		normal_print("Please enter the name of this item: \n");
 		errCheck = getString(itemName, LINELEN+EXTRACHARS);
 		if (errCheck == IR_EOF) {
-			return;
+			break;
 		}
+
 		normal_print("Please enter the weight for this item as a whole number: \n");
-		errCheck = getInteger(&weight);
-		if (errCheck == IR_EOF) {
-			return;
-		}
+		getInteger(&weight);
 		normal_print("Please enter the cost for this item as a whole number: \n");
-		errCheck = getInteger(&cost);
-		if (errCheck == IR_EOF) {
-			return;
-		}
+		getInteger(&cost);
 		normal_print("Please enter the number of this item we will have: \n");
-		errCheck = getInteger(&count);
-		i++;
+		getInteger(&count);
+		/* much preferable to remove invalid entries than to allow errors..
+		 * so I'm using this method instead of an error list */
+		if (weight && cost && count) {
+			itemlist_add(&itemList, itemName, weight, cost, count);
+			printf("%s successfully added to the list.\n\n", itemName);
+			itemCounter++;
+		}
+		else {
+			error_print("Item could not be added. Please ensure each entry is valid.\n");
+		}
+		/* set values to 0 as to not allow input carry over from previous loops */
+		weight = 0, cost = 0, count = 0, errCheck = 0;
 	}
-	if (errCheck == IR_EOF) {
-		normal_print("And back to the menu we go!\n");
-		return;
+	if (category == 'c' && itemCounter > 0) {
+		knapsack_greedy(&itemList, bagCapacity, COST);
 	}
+	else if (category == 'w' && itemCounter > 0) {
+		knapsack_greedy(&itemList, bagCapacity, WEIGHT);
+	}
+	else {
+		normal_print("No items added. Returning to menu.\n");
+	}
+
 }
+
 void recursiveKnapsack() {
 	normal_print("Brute forced a recursive knapsack solution. Good job!\n");
 }
