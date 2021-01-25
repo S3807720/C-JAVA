@@ -15,6 +15,16 @@ void clear_buffer(void) {
 	clearerr(stdin);
 }
 
+int randNum(int max) {
+  int integer;
+  integer = rand();
+  if (integer < 0) {
+	  integer = -integer;
+  }
+  integer = integer % max;
+  return(integer);
+}
+
 int getInteger(int* integer) {
 	/* flag to end loop */
 	int finished = FALSE;
@@ -61,15 +71,18 @@ BOOLEAN game_init(struct game* thegame) {
 	printf("init game method\n");
 	createPlayer(thegame);
 	int width, height;
-	BOOLEAN errorCheck;
-	errorCheck = TRUE;
-	while(errorCheck == TRUE) {
+	struct board nboard;
+	int errorCheck;
+	errorCheck = NULL;
+	while(errorCheck == NULL) {
 		errorCheck = getInteger(&width);
 		errorCheck = getInteger(&height);
 		printf("%d %d\n", width, height);
 		new_board(width, height);
 	}
-
+	if (errorCheck == FALSE) {
+		return FALSE;
+	}
 	return TRUE;
 }
 
@@ -84,4 +97,6 @@ void play_game(const char* scoresfile) {
 	printf("play game method\n");
 	struct game thegame;
 	game_init(&thegame);
+	struct score_list scoreBoard;
+	scoreBoard = load_scores(scoresfile);
 }

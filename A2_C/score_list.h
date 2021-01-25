@@ -7,6 +7,7 @@
  *****************************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #ifndef SCORE_LIST_H
 #define SCORE_LIST_H
 

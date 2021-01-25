@@ -12,21 +12,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define EOF -1
-
 struct board* new_board(int w, int h) {
 	struct board newBoard;
-	printf("new board method\n");
+	int i;
 	newBoard.width = w;
 	newBoard.height = h;
-	/* allocate width/rows then go through each row and allocate columns */
-	newBoard.matrix = malloc(w * sizeof(int));
-	for(int i = 0; i < h; i++) {
-		newBoard.matrix[i] = malloc(h * sizeof(int));
+	/* allocate width/columns then go through each row and allocate rows */
+	newBoard.matrix = malloc(w * sizeof(struct cell));
+	for(i = 0; i < h; i++) {
+		newBoard.matrix[i] = malloc(h * sizeof(struct cell));
 	}
 	/* initialize each cell */
 	init_cell(&newBoard,w, h);
-	return TRUE;
+	return &new_board;
 }
 
 void init_cell(struct board* newBoard,int w, int h) {

@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
 				fprintf(stderr, "Error: file does not exist.\n");
 		        return EXIT_FAILURE;
 	}
+	fclose(fpRead);
     play_game(fileName);
 	return EXIT_SUCCESS;
 }

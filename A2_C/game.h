@@ -7,10 +7,12 @@
  *****************************************************************************/
 #include "board.h"
 #include "player.h"
+#include "score_list.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #ifndef GAME_H
 #define GAME_H
