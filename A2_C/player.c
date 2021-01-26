@@ -20,17 +20,17 @@ char *color_strings[] = {"\033[0;31m", "\033[0;32m", "\033[0;33m", "\033[0;34m",
  * with. Also assign the game pointer so we can access it later.
  **/
 
-BOOLEAN getString(char input[], int length) {
+BOOLEAN getString(char input[], int length, char* type) {
 	int finished = FALSE;
 	do {
-		printf("Please enter your name(blank input sends back to menu):\n");
+		normal_print("Please enter your %s(blank input sends back to menu):\n", type);
 		/* exit back to menu when blank or ctrl d is entered */
 		if (fgets(input, length, stdin) == NULL || *input == '\n') {
 			return FALSE;
 		}
 		/* if input is too long, clear buffer  and try again*/
 		if (input[strlen(input) - 1] != '\n') {
-			printf("Input was too long.\n");
+			error_print("Input was too long.\n");
 			clear_buffer();
 		} else {
 			/* replace \n with \0. */
@@ -46,33 +46,32 @@ BOOLEAN createPlayer(struct game *thegame) {
 	BOOLEAN errorCheck;
 	int count;
 	count = 0;
-	printf("create player method\n");
 	char playerName[NAMELEN];
-	while (errorCheck != TRUE && MAX_PLAYERS > count) {
-		errorCheck = getString(playerName, NAMELEN+EXTRACHARS);
-		if(errorCheck == FALSE && count < MAX_PLAYERS) {
-			printf("oh no game then i guess\n");
+	while (MAX_PLAYERS > count) {
+		errorCheck = getString(playerName, NAMELEN+EXTRACHARS, "name");
+		if(errorCheck == FALSE) {
 			return FALSE;
 		}
+		player_init(count, playerName, thegame);
+		/* increase curr players */
+		thegame->curr_player_num++;
 		++count;
 	}
-	struct player theplayer;
-	player_init(&theplayer, playerName, thegame);
+
 	return TRUE;
 }
 
-BOOLEAN player_init(struct player *theplayer, const char *name,
+BOOLEAN player_init(int count,const char *name,
                     struct game *thegame) {
-	printf("player init method\n");
-	theplayer->curgame = thegame;
-	strcpy(theplayer->name, name);
+	thegame->players[count].curgame = thegame;
+	strcpy(thegame->players[count].name, name);
 	/* set semi random colour */
 	srand(time(NULL));
 	int randCol;
 	randCol = ( rand() % 7);
-	theplayer -> color = randCol;
-	theplayer -> score = 0;
-	printf("end method\n%d\n%s\n", theplayer->color, theplayer->name);
+	thegame->players[count].color = randCol;
+	thegame->players[count].score = 0;
+	printf("end method\n color:%d name:%s\n", thegame->players[count].color, thegame->players[count].name);
     return TRUE;
 }
 

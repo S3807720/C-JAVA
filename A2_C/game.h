@@ -13,6 +13,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <stdarg.h>
 
 #ifndef GAME_H
 #define GAME_H
@@ -29,6 +30,8 @@ struct game {
 BOOLEAN game_init(struct game*);
 void play_game(const char*);
 BOOLEAN file_exists (char *filename);
+int error_print(const char *format, ...);
+int normal_print(const char *format, ...);
 void clear_buffer(void);
 
 #endif

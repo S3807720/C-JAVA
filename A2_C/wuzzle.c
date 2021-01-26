@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 //		        return EXIT_FAILURE;
 //	}
 	if ((fpRead = fopen(fileName, "r")) == NULL) {
-				fprintf(stderr, "Error: file does not exist.\n");
+				fprintf(stderr, "Error: file does not exist. Exiting game.\n");
 		        return EXIT_FAILURE;
 	}
 	fclose(fpRead);

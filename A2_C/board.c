@@ -13,23 +13,23 @@
 #include <string.h>
 
 struct board* new_board(int w, int h) {
-	struct board newBoard;
+	struct board* newBoard;
 	int i;
-	newBoard.width = w;
-	newBoard.height = h;
+	newBoard = malloc(sizeof(struct board));
+	newBoard->width = w;
+	newBoard->height = h;
 	/* allocate width/columns then go through each row and allocate rows */
-	newBoard.matrix = malloc(w * sizeof(struct cell));
-	for(i = 0; i < h; i++) {
-		newBoard.matrix[i] = malloc(h * sizeof(struct cell));
+	newBoard->matrix = malloc(w * sizeof(struct cell));
+	for(i = 0; i < w; i++) {
+		newBoard->matrix[i] = malloc(h * sizeof(struct cell));
 	}
 	/* initialize each cell */
-	init_cell(&newBoard,w, h);
-	return &new_board;
+	init_cell(newBoard,w, h);
+	return newBoard;
 }
 
 void init_cell(struct board* newBoard,int w, int h) {
 	int i, j;
-	printf("starting to init\n%d %d\n",w,h);
 	i = 0;
 	while (w > i) {
 		j = 0;

@@ -36,11 +36,11 @@ struct player {
     char name[NAMELEN + EXTRACHARS];
     enum color color;
     struct game *curgame;
-    struct letter_score *hand;
+    struct score_list *hand;
     int score;
 };
 
-BOOLEAN player_init(struct player *, const char *, struct game *);
+BOOLEAN player_init(int count,const char *name,struct game *thegame);
 BOOLEAN createPlayer(struct game *thegame);
 enum move_result player_turn(struct player *);
 #endif

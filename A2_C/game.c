@@ -25,14 +25,14 @@ int randNum(int max) {
   return(integer);
 }
 
-int getInteger(int* integer) {
+int getInteger(int* integer, char* type) {
 	/* flag to end loop */
 	int finished = FALSE;
 	char input[NAMELEN + EXTRACHARS];
 	int int_result = 0;
 	char* end;
 	do {
-		printf("Please enter your choice:\n");
+		normal_print("Please enter the %s:\n", type);
 		/* send FALSE when empty/eof detected */
 		if (fgets(input, NAMELEN + EXTRACHARS, stdin) == NULL
 				|| *input == '\n') {
@@ -40,7 +40,7 @@ int getInteger(int* integer) {
 		}
 		/* if input is too long, clear buffer  and try again*/
 		if (input[strlen(input) - 1] != '\n') {
-			printf("Input was too long.\n");
+			normal_print("Input was too long.\n");
 			clear_buffer();
 
 		} else {
@@ -68,21 +68,22 @@ int getInteger(int* integer) {
  * what is required.
  **/
 BOOLEAN game_init(struct game* thegame) {
-	printf("init game method\n");
-	createPlayer(thegame);
-	int width, height;
-	struct board nboard;
 	int errorCheck;
-	errorCheck = NULL;
-	while(errorCheck == NULL) {
-		errorCheck = getInteger(&width);
-		errorCheck = getInteger(&height);
-		printf("%d %d\n", width, height);
-		new_board(width, height);
-	}
+	errorCheck = createPlayer(thegame);
 	if (errorCheck == FALSE) {
 		return FALSE;
 	}
+	int width, height;
+	struct board nboard;
+	errorCheck = getInteger(&width, "width");
+	errorCheck = getInteger(&height, "height");
+	if (errorCheck == FALSE) {
+		return FALSE;
+	}
+	printf("%d %d\n", width, height);
+	nboard = *new_board(width, height);
+	/* this isn't working, not being set, fix tmrw */
+	*thegame->theboard = nboard;
 	return TRUE;
 }
 
@@ -94,9 +95,44 @@ BOOLEAN game_init(struct game* thegame) {
  * game.
  **/
 void play_game(const char* scoresfile) {
-	printf("play game method\n");
 	struct game thegame;
-	game_init(&thegame);
-	struct score_list scoreBoard;
-	scoreBoard = load_scores(scoresfile);
+	int errorCheck;
+	errorCheck = game_init(&thegame);
+	if (errorCheck == FALSE) {
+		normal_print("Input was cancelled. Exiting game. Thanks for playing. :)");
+		exit(0);
+	}
+	struct score_list scoreList;
+	printf("about to load score la\n");
+	scoreList = *load_scores(scoresfile);
+	printf(" %c | ", scoreList.scores[25].letter);
+	printf(" %d | ", scoreList.scores[25].score);
+	printf(" %d | \n", scoreList.scores[25].count);
+}
+
+/**
+ * Code provided by Paul Miller for use in "Programming in C",
+ * From start-up code in Assignment 1, study period 4, 2020.
+ **/
+int error_print(const char *format, ...) {
+	va_list arglist;
+	int count = 0;
+	/* print out error preamble */
+	count += fprintf(stderr, "Error: ");
+	/* print out the rest of the args */
+	va_start(arglist, format);
+	count += vfprintf(stderr, format, arglist);
+	va_end(arglist);
+	return count;
+}
+int normal_print(const char *format, ...) {
+	int count = 0;
+	/* prepare the argument list for output */
+	va_list arglist;
+	va_start(arglist, format);
+	/* output the args */
+	count += vprintf(format, arglist);
+	/* cleanup */
+	va_end(arglist);
+	return count;
 }

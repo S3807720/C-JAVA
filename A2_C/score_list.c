@@ -16,9 +16,7 @@
  **/
 //void scoreInit(struct score_list* scoreBoard) {
 //	int i;
-//	for(i = 0; i < NUM_SCORES; i++) {
-//		scoreBoard->scores[i] = malloc(sizeof(struct score));
-//	}
+//	scoreBoard = malloc(sizeof(struct score_list));
 //}
 
 struct score_list *load_scores(const char *filename) {
@@ -27,40 +25,33 @@ struct score_list *load_scores(const char *filename) {
 	i = 0;
 	char line[NUM_SCORES], *ltr, *score, *cnt, *end, *ptr;
 	ltr = NULL, score = NULL, cnt = NULL, ptr = NULL;
-	struct score_list scoreBoard;
-//	scoreInit(&scoreBoard);
+	struct score_list *scoreBoard;
+	scoreBoard = malloc(sizeof(struct score_list));
+//	scoreInit(scoreBoard);
 	if ((fpRead = fopen(filename, "r")) == NULL) {
 		return EXIT_FAILURE;
 	}
-    // loop through each line in file
+    /* loop through each line in file */
     while(fgets(line, sizeof(line), fpRead) != NULL){
     	printf("%s", line);
-        //no need to convert the char to a long as a char is already an int
+        /*no need to convert the char to a long as we want the int value of the char */
     	ltr = strtok_r(line, delim, &ptr);
-		scoreBoard.scores[i].letter = *ltr;
-		printf("count: %d = %c | ", i, scoreBoard.scores[i].letter);
+		scoreBoard->scores[i].letter = *ltr;
+		printf("count: %d = %c | ", i, scoreBoard->scores[i].letter);
     	score = strtok_r(NULL, delim, &ptr);
-		scoreBoard.scores[i].score = (int) strtol(score, &end, 0);
-	    printf("%d | ", scoreBoard.scores[i].score);
+    	scoreBoard->scores[i].score = (int) strtol(score, &end, 0);
+	    printf("%d | ", scoreBoard->scores[i].score);
     	cnt = strtok_r(NULL, delim, &ptr);
-		scoreBoard.scores[i].count = (int) strtol(cnt, &end, 0);
-		printf("%d\n\n", scoreBoard.scores[i].count);
-        //go to next line
+    	scoreBoard->scores[i].count = (int) strtol(cnt, &end, 0);
+		printf("%d\n\n", scoreBoard->scores[i].count);
+        /*go to next line */
         i++;
     }
-
+	/* and close file */
 	fclose(fpRead);
     return scoreBoard;
 }
-/* struct score {
-    int letter, score, count;
-};
 
-struct score_list {
-    struct score scores[NUM_SCORES];
-    int num_scores;
-    int total_count;
-}; */
 /**
  * deal letters from the score list in random order, so that the player hand has
  *five letters at the end.
