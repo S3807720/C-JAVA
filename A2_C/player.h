@@ -7,11 +7,14 @@
  *****************************************************************************/
 #include "shared.h"
 #include "rules-b.h"
+
+
 #ifndef PLAYER_H
 #define PLAYER_H
 /* the maximum length of a player's name */
 #define NAMELEN 40
 #define EXTRACHARS 2
+#define MAXHAND 5
 
 /**
  * enumeration that defines the colours that can be used for players

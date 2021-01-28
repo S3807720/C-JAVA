@@ -6,15 +6,16 @@
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
 #include "player.h"
-
 #include "game.h"
-#include <time.h>
+#include "board.h"
+
+#define MAX_COL 7
 /* the color_strings array that defines the color codes for the printing
  * out colour in the terminal. The order of the values in this array is the
  * same as the color enum
  **/
 char *color_strings[] = {"\033[0;31m", "\033[0;32m", "\033[0;33m", "\033[0;34m",
-                         "\033[0;35m", "\033[0;36m", "\033[0m"};
+		"\033[0;35m", "\033[0;36m", "\033[0m"};
 /**
  * prompt the user for their name and deal the letters for the player to start
  * with. Also assign the game pointer so we can access it later.
@@ -62,21 +63,35 @@ BOOLEAN createPlayer(struct game *thegame) {
 }
 
 BOOLEAN player_init(int count,const char *name,
-                    struct game *thegame) {
+		struct game *thegame) {
 	thegame->players[count].curgame = thegame;
 	strcpy(thegame->players[count].name, name);
 	/* set semi random colour */
-	srand(time(NULL));
-	int randCol;
-	randCol = ( rand() % 7);
+	int randCol, i;
+	randCol = randomNumber(MAX_COL);
 	thegame->players[count].color = randCol;
 	thegame->players[count].score = 0;
-	printf("end method\n color:%d name:%s\n", thegame->players[count].color, thegame->players[count].name);
-    return TRUE;
+	thegame->players[count].hand = malloc(sizeof(struct score_list));
+	thegame->players[count].hand->num_scores = 0;
+	thegame->players[count].hand->total_count = 0;
+	for (i = 0; MAXHAND > i; i++) {
+		thegame->players[count].hand->scores[i].count = EOF;
+		thegame->players[count].hand->scores[i].letter = EOF;
+		thegame->players[count].hand->scores[i].score = EOF;
+	}
+	printf("player color:%d name:%s\n", thegame->players[count].color, thegame->players[count].name);
+	return TRUE;
 }
+
 
 /**
  * play a move for this player. please see the assignment specification for the
  * details of this.
  **/
-enum move_result player_turn(struct player *theplayer) { return MOVE_QUIT; }
+enum move_result player_turn(struct player *theplayer) {
+	print_board(theplayer->curgame->theboard);
+	normal_print("Please enter a new word: \n", theplayer->name);
+	normal_print("Please enter the new location for the word(x,y): \n");
+	normal_print("Please enter the orientation for the word - h for horizontal and v for vertical: \n");
+	return MOVE_QUIT;
+}

@@ -6,6 +6,7 @@
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
 #include "board.h"
+#include "game.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -26,6 +27,37 @@ struct board* new_board(int w, int h) {
 	/* initialize each cell */
 	init_cell(newBoard,w, h);
 	return newBoard;
+}
+
+/* print current board */
+void print_board(struct board* newBoard) {
+	int i, j;
+//	newBoard->matrix[1][2].letter = 'F';
+//	newBoard->matrix[j][i].owner =
+//	newBoard->matrix[1][0].letter = 'B';
+//	newBoard->matrix[0][1].letter = 'Z';
+//	newBoard->matrix[0][2].letter = 'X';
+	normal_print("  | ");
+	for (i = 0; newBoard->width > i; ++i) {
+		normal_print("%d | ", i+1);
+	}
+	normal_print("<X\n");
+	/* go through each row, left to right */
+	for (i = 0; newBoard->height > i; ++i) {
+		/* adjust the amount of --- for each width to keep symmetry*/
+		for(j = 0; newBoard->width > j; ++j) {
+			normal_print("-----");
+		}
+		normal_print("\n%d | ", i+1);
+		for (j = 0; newBoard->width > j; ++j) {
+			if (newBoard->matrix[j][i].owner != NULL) {
+				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
+						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
+			}
+		}
+		normal_print("\n");
+	}
+	normal_print("Y\n");
 }
 
 void init_cell(struct board* newBoard,int w, int h) {

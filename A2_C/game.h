@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include <time.h>
 #include <stdarg.h>
 
@@ -29,9 +28,11 @@ struct game {
 
 BOOLEAN game_init(struct game*);
 void play_game(const char*);
+void createHand(struct score_list *score_list, struct game* thegame);
 BOOLEAN file_exists (char *filename);
 int error_print(const char *format, ...);
 int normal_print(const char *format, ...);
 void clear_buffer(void);
+int randomNumber(int max);
 
 #endif

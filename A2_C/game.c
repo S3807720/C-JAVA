@@ -6,23 +6,13 @@
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
 #include "game.h"
-
+#include "player.h"
 
 void clear_buffer(void) {
 	int ch;
 	while (ch = getc(stdin), ch != EOF && ch != '\n')
 		;
 	clearerr(stdin);
-}
-
-int randNum(int max) {
-  int integer;
-  integer = rand();
-  if (integer < 0) {
-	  integer = -integer;
-  }
-  integer = integer % max;
-  return(integer);
 }
 
 int getInteger(int* integer, char* type) {
@@ -74,16 +64,17 @@ BOOLEAN game_init(struct game* thegame) {
 		return FALSE;
 	}
 	int width, height;
-	struct board nboard;
+	/* if any values are empty, return exit function */
 	errorCheck = getInteger(&width, "width");
 	errorCheck = getInteger(&height, "height");
 	if (errorCheck == FALSE) {
 		return FALSE;
 	}
-	printf("%d %d\n", width, height);
-	nboard = *new_board(width, height);
-	/* this isn't working, not being set, fix tmrw */
-	*thegame->theboard = nboard;
+	/* allocate memory for pointer */
+	thegame->theboard = malloc(sizeof(struct board));
+	/* create board, initialize and assign to board pointer in game */
+	*thegame->theboard = *new_board(width, height);
+	printf("height: %d width: %d random node: %d\n", thegame->theboard->height, thegame->theboard->width, thegame->theboard->matrix[0][1].letter);
 	return TRUE;
 }
 
@@ -96,18 +87,52 @@ BOOLEAN game_init(struct game* thegame) {
  **/
 void play_game(const char* scoresfile) {
 	struct game thegame;
-	int errorCheck;
+	int errorCheck, i, turnCount, quitFlag;
+	turnCount = 0, quitFlag = FALSE;
+	srand(time(NULL));
 	errorCheck = game_init(&thegame);
 	if (errorCheck == FALSE) {
 		normal_print("Input was cancelled. Exiting game. Thanks for playing. :)");
 		exit(0);
 	}
 	struct score_list scoreList;
-	printf("about to load score la\n");
 	scoreList = *load_scores(scoresfile);
-	printf(" %c | ", scoreList.scores[25].letter);
-	printf(" %d | ", scoreList.scores[25].score);
-	printf(" %d | \n", scoreList.scores[25].count);
+	/* flip coin for player turn */
+	thegame.curr_player_num = randomNumber(MAX_PLAYERS);
+	normal_print("Player %s will take the first turn.\n", thegame.players[thegame.curr_player_num].name);
+	/* game loop */
+	thegame.theboard->matrix[1][2].letter = 'F';
+	thegame.theboard->matrix[1][2].owner = &thegame.players[1];
+	thegame.theboard->matrix[1][0].letter = 'B';
+	thegame.theboard->matrix[1][0].owner = &thegame.players[0];
+	thegame.theboard->matrix[0][1].letter = 'Z';
+	thegame.theboard->matrix[0][1].owner = &thegame.players[1];
+	thegame.theboard->matrix[0][2].letter = 'X';
+	thegame.theboard->matrix[0][2].owner = &thegame.players[0];
+	while ((thegame.theboard->height * thegame.theboard->width) > turnCount && quitFlag == FALSE) {
+		deal_letters(&scoreList, thegame.players[thegame.curr_player_num].hand);
+		normal_print("\n");
+		normal_print("Player %s's turn.\nTheir hand contains: %c", thegame.players[thegame.curr_player_num].name);
+		for(i = 0; 5 > i; i++) {
+			normal_print("%c | ", thegame.players[thegame.curr_player_num].hand->scores[i].letter);
+		}
+		normal_print("\n");
+		player_turn(&thegame.players[thegame.curr_player_num]);
+		if (errorCheck == FALSE) {
+			thegame.curr_player_num = 1 - thegame.curr_player_num;
+			continue;
+		}
+		/* flip players turn */
+		thegame.curr_player_num = 1 - thegame.curr_player_num;
+		++turnCount;
+	}
+}
+
+/* random number generator */
+int randomNumber(int max) {
+	int num;
+	num = (rand() % max);
+	return num;
 }
 
 /**
