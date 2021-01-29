@@ -24,9 +24,31 @@ char *color_strings[] = {"\033[0;31m", "\033[0;32m", "\033[0;33m", "\033[0;34m",
 BOOLEAN getString(char input[], int length, char* type) {
 	int finished = FALSE;
 	do {
-		normal_print("Please enter your %s(blank input sends back to menu):\n", type);
+		normal_print("Please enter your %s(blank input cancels input):\n", type);
 		/* exit back to menu when blank or ctrl d is entered */
 		if (fgets(input, length, stdin) == NULL || *input == '\n') {
+			return FALSE;
+		}
+		/* if input is too long, clear buffer  and try again*/
+		if (input[strlen(input) - 1] != '\n') {
+			error_print("Input was too long.\n");
+			clear_buffer();
+		} else {
+			/* replace \n with \0. */
+			input[strlen(input) - 1] = '\0';
+			/* change flag to end loop if everything's A-OK */
+			finished = TRUE;
+		}
+	} while (finished == FALSE);
+	return TRUE;
+}
+/* fix to get char inputs */
+int getMoveInput(char input[]) {
+	int finished = FALSE;
+	do {
+		normal_print("Please enter your %s(blank input cancels input):\n", type);
+		/* exit back to menu when blank or ctrl d is entered */
+		if (fgets(input, NAMELEN, stdin) == NULL || *input == '\n') {
 			return FALSE;
 		}
 		/* if input is too long, clear buffer  and try again*/
@@ -89,9 +111,30 @@ BOOLEAN player_init(int count,const char *name,
  * details of this.
  **/
 enum move_result player_turn(struct player *theplayer) {
+	int moveCheck;
+	char word[NAMELEN], coordinates[NAMELEN];
+	int orient;
 	print_board(theplayer->curgame->theboard);
-	normal_print("Please enter a new word: \n", theplayer->name);
-	normal_print("Please enter the new location for the word(x,y): \n");
-	normal_print("Please enter the orientation for the word - h for horizontal and v for vertical: \n");
+	while (moveCheck != FALSE) {
+		moveCheck = getString(word, NAMELEN+EXTRACHARS, "word");
+		moveCheck = getString(coordinates, NAMELEN, "coordinates for word(x,y)");
+		moveCheck = getInteger(&orient, "orientation for the word - 1 for horizontal or 2 for vertical")-1;
+		/* turn coord into struct for int, int */
+	}
+	moveCheck = MOVE_SUCCESS;
+	if (moveCheck == FALSE) {
+		return MOVE_SKIP;
+	}
+	struct coord coords;
+	coords.x = 1, coords.y = 2;
+	if (moveCheck == MOVE_SUCCESS) {
+		validate_move(theplayer, word, &coords, orient);
+		//theplayer->curgame->theboard->matrix[i][coords->y];
+	}
+
+	if (moveCheck == MOVE_BOARD_FULL) {
+
+	}
+
 	return MOVE_QUIT;
 }

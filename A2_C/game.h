@@ -34,5 +34,6 @@ int error_print(const char *format, ...);
 int normal_print(const char *format, ...);
 void clear_buffer(void);
 int randomNumber(int max);
+int getInteger(int* integer, char* type);
 
 #endif

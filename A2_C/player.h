@@ -45,5 +45,8 @@ struct player {
 
 BOOLEAN player_init(int count,const char *name,struct game *thegame);
 BOOLEAN createPlayer(struct game *thegame);
+int getMoveInput(char input[]);
+BOOLEAN getString(char input[], int length, char* type);
+
 enum move_result player_turn(struct player *);
 #endif

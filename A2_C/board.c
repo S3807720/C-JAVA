@@ -32,11 +32,6 @@ struct board* new_board(int w, int h) {
 /* print current board */
 void print_board(struct board* newBoard) {
 	int i, j;
-//	newBoard->matrix[1][2].letter = 'F';
-//	newBoard->matrix[j][i].owner =
-//	newBoard->matrix[1][0].letter = 'B';
-//	newBoard->matrix[0][1].letter = 'Z';
-//	newBoard->matrix[0][2].letter = 'X';
 	normal_print("  | ");
 	for (i = 0; newBoard->width > i; ++i) {
 		normal_print("%d | ", i+1);
@@ -44,15 +39,22 @@ void print_board(struct board* newBoard) {
 	normal_print("<X\n");
 	/* go through each row, left to right */
 	for (i = 0; newBoard->height > i; ++i) {
-		/* adjust the amount of --- for each width to keep symmetry*/
+		/* adjust the amount of --- for each width */
 		for(j = 0; newBoard->width > j; ++j) {
 			normal_print("-----");
 		}
 		normal_print("\n%d | ", i+1);
 		for (j = 0; newBoard->width > j; ++j) {
+			/* if has a owner, print the char */
 			if (newBoard->matrix[j][i].owner != NULL) {
-				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
-						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
+//				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
+//						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
+//				normal_print("%c%s", newBoard->matrix[j][i].letter, newBoard->matrix[j][i].owner->name);
+				normal_print("%c | ", newBoard->matrix[j][i].letter);
+			}
+			/* otherwise empty spot */
+			else {
+				normal_print("  | ");
 			}
 		}
 		normal_print("\n");
