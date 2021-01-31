@@ -110,21 +110,35 @@ void play_game(const char* scoresfile) {
 	thegame.theboard->matrix[0][2].letter = 'X';
 	thegame.theboard->matrix[0][2].owner = &thegame.players[0];
 	while ((thegame.theboard->height * thegame.theboard->width) > turnCount && quitFlag == FALSE) {
+		int moveCheck;
+		moveCheck = MOVE_INVALID;
 		deal_letters(&scoreList, thegame.players[thegame.curr_player_num].hand);
 		normal_print("\n");
 		normal_print("Player %s's turn.\nTheir hand contains: %c", thegame.players[thegame.curr_player_num].name);
-		for(i = 0; 5 > i; i++) {
-			normal_print("%c | ", thegame.players[thegame.curr_player_num].hand->scores[i].letter);
-		}
 		normal_print("\n");
-		player_turn(&thegame.players[thegame.curr_player_num]);
-		if (errorCheck == FALSE) {
+		/* retry turn while invalid */
+		while (moveCheck == MOVE_INVALID ) {
+			for(i = 0; 5 > i; i++) {
+				normal_print("%c | ", thegame.players[thegame.curr_player_num].hand->scores[i].letter);
+			}
+			normal_print("\n\n");
+			moveCheck = player_turn(&thegame.players[thegame.curr_player_num]);
+		}
+
+		/* quit on player choice */
+		if (moveCheck == MOVE_QUIT) {
+			normal_print("Thanks for playing. \n");
+			exit(0);
+		}
+		/* flip players turn on successful turn */
+		if (moveCheck == MOVE_SKIP || MOVE_SUCCESS) {
 			thegame.curr_player_num = 1 - thegame.curr_player_num;
+			++turnCount;
 			continue;
 		}
-		/* flip players turn */
-		thegame.curr_player_num = 1 - thegame.curr_player_num;
-		++turnCount;
+		if (moveCheck == MOVE_BOARD_FULL) {
+			/* determine score and winner here */
+		}
 	}
 }
 

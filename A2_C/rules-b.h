@@ -13,7 +13,9 @@ enum move_result {
     MOVE_QUIT,
     MOVE_SKIP,
     MOVE_SUCCESS,
-    MOVE_BOARD_FULL
+    MOVE_BOARD_FULL,
+	/* add value for try again */
+	MOVE_INVALID
 };
 struct coord {
     int x, y;

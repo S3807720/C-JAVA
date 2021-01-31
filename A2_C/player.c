@@ -42,28 +42,6 @@ BOOLEAN getString(char input[], int length, char* type) {
 	} while (finished == FALSE);
 	return TRUE;
 }
-/* fix to get char inputs */
-int getMoveInput(char input[]) {
-	int finished = FALSE;
-	do {
-		normal_print("Please enter your %s(blank input cancels input):\n", type);
-		/* exit back to menu when blank or ctrl d is entered */
-		if (fgets(input, NAMELEN, stdin) == NULL || *input == '\n') {
-			return FALSE;
-		}
-		/* if input is too long, clear buffer  and try again*/
-		if (input[strlen(input) - 1] != '\n') {
-			error_print("Input was too long.\n");
-			clear_buffer();
-		} else {
-			/* replace \n with \0. */
-			input[strlen(input) - 1] = '\0';
-			/* change flag to end loop if everything's A-OK */
-			finished = TRUE;
-		}
-	} while (finished == FALSE);
-	return TRUE;
-}
 
 BOOLEAN createPlayer(struct game *thegame) {
 	BOOLEAN errorCheck;
@@ -111,30 +89,135 @@ BOOLEAN player_init(int count,const char *name,
  * details of this.
  **/
 enum move_result player_turn(struct player *theplayer) {
-	int moveCheck;
-	char word[NAMELEN], coordinates[NAMELEN];
-	int orient;
+	int moveCheck, orient, x, y;
+	char word[NAMELEN];
+	/* eof as default */
+	x = EOF, y = EOF, moveCheck = 0, orient = 0;
 	print_board(theplayer->curgame->theboard);
-	while (moveCheck != FALSE) {
-		moveCheck = getString(word, NAMELEN+EXTRACHARS, "word");
-		moveCheck = getString(coordinates, NAMELEN, "coordinates for word(x,y)");
-		moveCheck = getInteger(&orient, "orientation for the word - 1 for horizontal or 2 for vertical")-1;
-		/* turn coord into struct for int, int */
+	moveCheck = getString(word, NAMELEN+EXTRACHARS, "word");
+	while (x < 0 || x > theplayer->curgame->theboard->width
+			|| y < 0 || y > theplayer->curgame->theboard->height) {
+		moveCheck = getInteger(&x, "x(left to right) coordinate for word");
+		if (moveCheck == EOF) {
+			return MOVE_SKIP;
+		}
+		moveCheck = getInteger(&y, "y(top to bottom) coordinate for word");
+		if (moveCheck == EOF) {
+			return MOVE_SKIP;
+		}
+		/* if invalid width */
+		if (x < 0 || x > theplayer->curgame->theboard->width
+				|| y < 0 || y > theplayer->curgame->theboard->height) {
+			error_print("Invalid input. Must be positive numbers below boards "
+					"maximum width(%d) and height(%d).\n",theplayer->curgame->theboard->width, theplayer->curgame->theboard->height );
+		}
 	}
-	moveCheck = MOVE_SUCCESS;
-	if (moveCheck == FALSE) {
-		return MOVE_SKIP;
+	while(orient < 1 || orient > 2) {
+		moveCheck = getInteger(&orient, "orientation for the word - 1 for horizontal or 2 for vertical");
+		if (moveCheck == EOF) {
+			return MOVE_SKIP;
+		}
+		if (orient < 1 || orient > 2) {
+			error_print("Invalid input. Must be 1 or 2.\n");
+		}
+	}
+	/* set orient based on input */
+	if (orient == 1) {
+		orient = HORIZ;
+	}
+	else {
+		orient = VERT;
 	}
 	struct coord coords;
-	coords.x = 1, coords.y = 2;
+	/*set coords to proper array vals */
+	coords.x = x-1, coords.y = y-1;
+	moveCheck = validate_move(theplayer, word, &coords, orient);
+	if (moveCheck == MOVE_INVALID) {
+		return MOVE_INVALID;
+	}
+	/* if validated, execute move and change variables */
 	if (moveCheck == MOVE_SUCCESS) {
-		validate_move(theplayer, word, &coords, orient);
-		//theplayer->curgame->theboard->matrix[i][coords->y];
+		executeMove(theplayer, orient, &coords, word);
+		return MOVE_SUCCESS;
 	}
 
 	if (moveCheck == MOVE_BOARD_FULL) {
-
+		return MOVE_BOARD_FULL;
 	}
 
 	return MOVE_QUIT;
+}
+
+/* execute action */
+void executeMove(struct player* theplayer, int orient, struct coord * coords, char * word) {
+	/* generic i, index for position of found hand, placedTiles to keep track of how much to decrement hand */
+	int i, index, placedTiles, wordIndex;
+	placedTiles = 0, wordIndex = 0;
+	BOOLEAN found;
+	if (orient == HORIZ) {
+		for (i = coords->x; theplayer->curgame->theboard->height > i; ++i) {
+			found = FALSE;
+			/* if letter already on board */
+			if (theplayer->curgame->theboard->matrix[i][coords->y].owner != NULL) {
+				theplayer->curgame->theboard->matrix[i][coords->y].owner = theplayer;
+				/* increment char spot */
+				++wordIndex;
+				continue;
+			}
+			int hand, index, handLen;
+			index = 0, handLen = theplayer->hand->total_count;
+			for(hand = 0; handLen > hand; ++hand) {
+				if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
+					printf("letter found.\n");
+					index = hand;
+					found = TRUE;
+					/* reduce count of hand */
+					++placedTiles;
+				}
+			}
+			++wordIndex;
+			/* change values of indexed letter and place on board */
+			if(found == TRUE) {
+				printf("placing tile horizontally..\n");
+				theplayer->curgame->theboard->matrix[i][coords->y].letter = theplayer->hand->scores[index].letter;
+				theplayer->curgame->theboard->matrix[i][coords->y].owner = theplayer;
+				theplayer->hand->scores[index].letter = EOF;
+				--theplayer->hand->scores[index].count;
+			}
+		}
+	}
+	/* if vertical, change orientation and do same */
+	else if (orient == VERT) {
+		for (i = coords->y; theplayer->curgame->theboard->width > i; ++i) {
+			found = FALSE;
+			/* if letter already on board */
+			if (theplayer->curgame->theboard->matrix[coords->x][i].owner != NULL) {
+				theplayer->curgame->theboard->matrix[coords->x][i].owner = theplayer;
+				/* increment char spot */
+				++wordIndex;
+				continue;
+			}
+			int hand, index, handLen;
+			index = 0, handLen = theplayer->hand->num_scores;
+			for(hand = 0; handLen > hand; ++hand) {
+				if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
+					index = hand;
+					found = TRUE;
+					/* reduce count of hand */
+					++placedTiles;
+				}
+			}
+			++wordIndex;
+			/* change values of indexed letter and place on board */
+			if(found == TRUE) {
+				printf("placing tile vertically..\n");
+				theplayer->curgame->theboard->matrix[coords->x][i].letter = theplayer->hand->scores[index].letter;
+				theplayer->curgame->theboard->matrix[coords->x][i].owner = theplayer;
+				theplayer->hand->scores[index].letter = EOF;
+				--theplayer->hand->scores[index].count;
+			}
+
+		}
+	}
+	theplayer->hand->total_count -= placedTiles;
 }

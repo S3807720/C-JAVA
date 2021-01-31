@@ -72,6 +72,7 @@ struct score_list *load_scores(const char *filename) {
  **/
 void deal_letters(struct score_list *score_list,
                   struct score_list *player_hand) {
+	printf("dealing letters..\n");
 	int random, index;
 	random = 0;
 	while (MAX_HAND > player_hand->total_count && score_list->total_count > 0) {
@@ -87,7 +88,6 @@ void deal_letters(struct score_list *score_list,
 		player_hand->scores[index].count = 1;
 		player_hand->total_count++;
 		player_hand->num_scores++;
-//		printf("player hand:  %c & %d | random tile: %c & %d| \n", player_hand->scores[index].letter, player_hand->scores[index].count, score_list->scores[random].letter, score_list->scores[random].count);
 	}
 
 	if (score_list->total_count == 0){

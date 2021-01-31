@@ -30,13 +30,14 @@ struct board* new_board(int w, int h) {
 }
 
 /* print current board */
-void print_board(struct board* newBoard) {
-	int i, j;
+int print_board(struct board* newBoard) {
+	int i, j, nodeCount;
+	nodeCount = 0;
 	normal_print("  | ");
 	for (i = 0; newBoard->width > i; ++i) {
 		normal_print("%d | ", i+1);
 	}
-	normal_print("<X\n");
+	normal_print("\n");
 	/* go through each row, left to right */
 	for (i = 0; newBoard->height > i; ++i) {
 		/* adjust the amount of --- for each width */
@@ -51,6 +52,7 @@ void print_board(struct board* newBoard) {
 //						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
 //				normal_print("%c%s", newBoard->matrix[j][i].letter, newBoard->matrix[j][i].owner->name);
 				normal_print("%c | ", newBoard->matrix[j][i].letter);
+				++nodeCount;
 			}
 			/* otherwise empty spot */
 			else {
@@ -59,15 +61,19 @@ void print_board(struct board* newBoard) {
 		}
 		normal_print("\n");
 	}
-	normal_print("Y\n");
+	normal_print("\n");
+	if(nodeCount == (newBoard->height * newBoard->width)) {
+		return MOVE_BOARD_FULL;
+	}
+	return TRUE;
 }
 
-void init_cell(struct board* newBoard,int w, int h) {
+void init_cell(struct board* newBoard,int width, int height) {
 	int i, j;
 	i = 0;
-	while (w > i) {
+	while (width > i) {
 		j = 0;
-		while (h > j) {
+		while (height > j) {
 			newBoard->matrix[i][j].owner = NULL;
 			newBoard->matrix[i][j].letter = EOF;
 			printf("+");
@@ -80,13 +86,12 @@ void init_cell(struct board* newBoard,int w, int h) {
 
 void free_cell(struct board* newBoard) {
 	int i, j;
-	printf("starting to wipe board\n");
+	printf("starting to wipe board..\n");
 	i = 0;
 	while (newBoard->width > i) {
 		j = 0;
 		while (newBoard->height > j) {
 			free(newBoard->matrix[i]);
-			printf("+");
 			++j;
 		}
 		printf("\n");

@@ -23,6 +23,6 @@ struct board {
 };
 
 void init_cell(struct board* newBoard,int w, int h);
-void print_board(struct board* newBoard);
+int print_board(struct board* newBoard);
 struct board* new_board(int, int);
 #endif
