@@ -17,12 +17,11 @@
  *the file name.
  **/
 
-
-/* need to check and verify inputs for some stupid reason..
+/*
  * You should validate that each line is formatted correctly with 2 commas and that the second and
 third elements are integers and the first element is a single letter in the range A-Z. Each letter should
 be unique and all letters must appear so by the end of the function your score list should have 26
-elements.
+elements.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  * */
 
 struct score_list *load_scores(const char *filename) {
@@ -49,13 +48,10 @@ struct score_list *load_scores(const char *filename) {
 //    		exit(0);
 //    	}
 		scoreBoard->scores[i].letter = *ltr;
-//		printf("count: %d = %c | ", i, scoreBoard->scores[i].letter);
     	score = strtok_r(NULL, delim, &ptr);
     	scoreBoard->scores[i].score = (int) strtol(score, &end, 0);
-//	    printf("%d | ", scoreBoard->scores[i].score);
     	cnt = strtok_r(NULL, delim, &ptr);
     	scoreBoard->scores[i].count = (int) strtol(cnt, &end, 0);
-//		printf("%d\n\n", scoreBoard->scores[i].count);
 		scoreBoard->total_count += scoreBoard->scores[i].count;
 		scoreBoard->num_scores += 1;
         /*go to next line */

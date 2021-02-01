@@ -24,9 +24,11 @@ int getInteger(int* integer, char* type) {
 	do {
 		normal_print("Please enter the %s:\n", type);
 		/* send FALSE when empty/eof detected */
-		if (fgets(input, NAMELEN + EXTRACHARS, stdin) == NULL
-				|| *input == '\n') {
-			return FALSE;
+		if (fgets(input, NAMELEN + EXTRACHARS, stdin) == NULL) {
+			return MOVE_QUIT;
+		}
+		else if (*input == '\n') {
+			return MOVE_SKIP;
 		}
 		/* if input is too long, clear buffer  and try again*/
 		if (input[strlen(input) - 1] != '\n') {
@@ -44,13 +46,13 @@ int getInteger(int* integer, char* type) {
 			}
 			/* change flag to end loop if everything's A-OK */
 			else {
-				finished = TRUE;
+				finished = MOVE_SUCCESS;
 			}
 		}
 	} while (finished == FALSE);
 	/* set menu choice thru pointer */
 	*integer = int_result;
-	return TRUE;
+	return MOVE_SUCCESS;
 }
 
 /**
@@ -66,8 +68,11 @@ BOOLEAN game_init(struct game* thegame) {
 	int width, height;
 	/* if any values are empty, return exit function */
 	errorCheck = getInteger(&width, "width");
+	if (errorCheck == MOVE_SKIP || MOVE_QUIT) {
+		return FALSE;
+	}
 	errorCheck = getInteger(&height, "height");
-	if (errorCheck == FALSE) {
+	if (errorCheck == MOVE_SKIP ||  MOVE_QUIT) {
 		return FALSE;
 	}
 	/* allocate memory for pointer */
@@ -109,7 +114,7 @@ void play_game(const char* scoresfile) {
 	thegame.theboard->matrix[0][1].owner = &thegame.players[1];
 	thegame.theboard->matrix[0][2].letter = 'X';
 	thegame.theboard->matrix[0][2].owner = &thegame.players[0];
-	while ((thegame.theboard->height * thegame.theboard->width) > turnCount && quitFlag == FALSE) {
+	while (quitFlag == FALSE) {
 		int moveCheck;
 		moveCheck = MOVE_INVALID;
 		deal_letters(&scoreList, thegame.players[thegame.curr_player_num].hand);
@@ -124,21 +129,29 @@ void play_game(const char* scoresfile) {
 			normal_print("\n\n");
 			moveCheck = player_turn(&thegame.players[thegame.curr_player_num]);
 		}
-
+		switch(moveCheck) {
+		/* determine score and winner here */
+		case(MOVE_BOARD_FULL) :
+			normal_print("Board is full. The winner is..\n");
+			quitFlag = TRUE;
+			break;
 		/* quit on player choice */
-		if (moveCheck == MOVE_QUIT) {
+		case(MOVE_QUIT) :
 			normal_print("Thanks for playing. \n");
-			exit(0);
-		}
-		/* flip players turn on successful turn */
-		if (moveCheck == MOVE_SKIP || MOVE_SUCCESS) {
+			quitFlag = TRUE;
+			break;
+		/* flip players turn on successful turn or skip - display msg if skip */
+		/* no break as it shares behavior with success other than alerting the user */
+		case(MOVE_SKIP) :
+			normal_print("Player %s has skipped their turn. \n", thegame.players[thegame.curr_player_num].name);
+		case(MOVE_SUCCESS) :
 			thegame.curr_player_num = 1 - thegame.curr_player_num;
 			++turnCount;
 			continue;
 		}
-		if (moveCheck == MOVE_BOARD_FULL) {
-			/* determine score and winner here */
-		}
+
+
+
 	}
 }
 

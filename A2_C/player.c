@@ -26,8 +26,11 @@ BOOLEAN getString(char input[], int length, char* type) {
 	do {
 		normal_print("Please enter your %s(blank input cancels input):\n", type);
 		/* exit back to menu when blank or ctrl d is entered */
-		if (fgets(input, length, stdin) == NULL || *input == '\n') {
-			return FALSE;
+		if (fgets(input, length, stdin) == NULL) {
+			return MOVE_QUIT;
+		}
+		if (*input == '\n') {
+			return MOVE_SKIP;
 		}
 		/* if input is too long, clear buffer  and try again*/
 		if (input[strlen(input) - 1] != '\n') {
@@ -40,7 +43,7 @@ BOOLEAN getString(char input[], int length, char* type) {
 			finished = TRUE;
 		}
 	} while (finished == FALSE);
-	return TRUE;
+	return MOVE_SUCCESS;
 }
 
 BOOLEAN createPlayer(struct game *thegame) {
@@ -50,7 +53,7 @@ BOOLEAN createPlayer(struct game *thegame) {
 	char playerName[NAMELEN];
 	while (MAX_PLAYERS > count) {
 		errorCheck = getString(playerName, NAMELEN+EXTRACHARS, "name");
-		if(errorCheck == FALSE) {
+		if(errorCheck == MOVE_SKIP || errorCheck == MOVE_QUIT) {
 			return FALSE;
 		}
 		player_init(count, playerName, thegame);
@@ -93,17 +96,32 @@ enum move_result player_turn(struct player *theplayer) {
 	char word[NAMELEN];
 	/* eof as default */
 	x = EOF, y = EOF, moveCheck = 0, orient = 0;
-	print_board(theplayer->curgame->theboard);
+	moveCheck = print_board(theplayer->curgame->theboard);
+	if (moveCheck == MOVE_BOARD_FULL) {
+		return MOVE_BOARD_FULL;
+	}
 	moveCheck = getString(word, NAMELEN+EXTRACHARS, "word");
+	if (moveCheck == MOVE_SKIP) {
+		return MOVE_SKIP;
+	}
+	if (moveCheck == MOVE_QUIT) {
+		return MOVE_QUIT;
+	}
 	while (x < 0 || x > theplayer->curgame->theboard->width
 			|| y < 0 || y > theplayer->curgame->theboard->height) {
 		moveCheck = getInteger(&x, "x(left to right) coordinate for word");
-		if (moveCheck == EOF) {
+		if (moveCheck == MOVE_SKIP) {
 			return MOVE_SKIP;
 		}
+		if (moveCheck == MOVE_QUIT) {
+			return MOVE_QUIT;
+		}
 		moveCheck = getInteger(&y, "y(top to bottom) coordinate for word");
-		if (moveCheck == EOF) {
+		if (moveCheck == MOVE_SKIP) {
 			return MOVE_SKIP;
+		}
+		if (moveCheck == MOVE_QUIT) {
+			return MOVE_QUIT;
 		}
 		/* if invalid width */
 		if (x < 0 || x > theplayer->curgame->theboard->width
@@ -114,8 +132,11 @@ enum move_result player_turn(struct player *theplayer) {
 	}
 	while(orient < 1 || orient > 2) {
 		moveCheck = getInteger(&orient, "orientation for the word - 1 for horizontal or 2 for vertical");
-		if (moveCheck == EOF) {
+		if (moveCheck == MOVE_SKIP) {
 			return MOVE_SKIP;
+		}
+		if (moveCheck == MOVE_QUIT) {
+			return MOVE_QUIT;
 		}
 		if (orient < 1 || orient > 2) {
 			error_print("Invalid input. Must be 1 or 2.\n");
@@ -186,7 +207,7 @@ void executeMove(struct player* theplayer, int orient, struct coord * coords, ch
 			}
 		}
 	}
-	/* if vertical, change orientation and do same */
+	/* if vertical, do same w/ diff part of array */
 	else if (orient == VERT) {
 		for (i = coords->y; theplayer->curgame->theboard->width > i; ++i) {
 			found = FALSE;

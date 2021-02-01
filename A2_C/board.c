@@ -63,9 +63,10 @@ int print_board(struct board* newBoard) {
 	}
 	normal_print("\n");
 	if(nodeCount == (newBoard->height * newBoard->width)) {
+		printf("oop boards full");
 		return MOVE_BOARD_FULL;
 	}
-	return TRUE;
+	return MOVE_SUCCESS;
 }
 
 void init_cell(struct board* newBoard,int width, int height) {
