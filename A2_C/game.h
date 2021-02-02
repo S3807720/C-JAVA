@@ -1,11 +1,10 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : S3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
-#include "board.h"
 #include "player.h"
 #include "score_list.h"
 #include <stdio.h>
@@ -23,17 +22,18 @@ struct game {
     struct player players[MAX_PLAYERS];
     int curr_player_num;
     struct board* theboard;
-    struct letter_list* score_list;
+    struct score_list* score_list;
 };
 
 BOOLEAN game_init(struct game*);
 void play_game(const char*);
-void createHand(struct score_list *score_list, struct game* thegame);
+void createHand(struct score_list *, struct game*);
 BOOLEAN file_exists (char *filename);
 int error_print(const char *format, ...);
 int normal_print(const char *format, ...);
 void clear_buffer(void);
 int randomNumber(int max);
 int getInteger(int* integer, char* type);
+void clearMemory(struct game *);
 
 #endif

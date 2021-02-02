@@ -1,6 +1,6 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : S3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 2, study period 4, 2020.
@@ -14,6 +14,7 @@ struct player;
 struct cell {
     struct player* owner;
     int letter;
+    int score;
 };
 
 struct board {
@@ -24,5 +25,6 @@ struct board {
 
 void init_cell(struct board* newBoard,int w, int h);
 int print_board(struct board* newBoard);
+void free_cell(struct board* newBoard);
 struct board* new_board(int, int);
 #endif

@@ -1,6 +1,6 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : S3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 2, study period 4, 2020.
@@ -8,7 +8,7 @@
 #include "player.h"
 #include "game.h"
 #include "board.h"
-
+#include <ctype.h>
 #define MAX_COL 7
 /* the color_strings array that defines the color codes for the printing
  * out colour in the terminal. The order of the values in this array is the
@@ -47,7 +47,7 @@ BOOLEAN getString(char input[], int length, char* type) {
 }
 
 BOOLEAN createPlayer(struct game *thegame) {
-	BOOLEAN errorCheck;
+	int errorCheck;
 	int count;
 	count = 0;
 	char playerName[NAMELEN];
@@ -82,7 +82,6 @@ BOOLEAN player_init(int count,const char *name,
 		thegame->players[count].hand->scores[i].letter = EOF;
 		thegame->players[count].hand->scores[i].score = EOF;
 	}
-	printf("player color:%d name:%s\n", thegame->players[count].color, thegame->players[count].name);
 	return TRUE;
 }
 
@@ -92,7 +91,7 @@ BOOLEAN player_init(int count,const char *name,
  * details of this.
  **/
 enum move_result player_turn(struct player *theplayer) {
-	int moveCheck, orient, x, y;
+	int moveCheck, orient, x, y, i;
 	char word[NAMELEN];
 	/* eof as default */
 	x = EOF, y = EOF, moveCheck = 0, orient = 0;
@@ -101,6 +100,11 @@ enum move_result player_turn(struct player *theplayer) {
 		return MOVE_BOARD_FULL;
 	}
 	moveCheck = getString(word, NAMELEN+EXTRACHARS, "word");
+	/* convert to upper case */
+	for(i = 0; word[i] != '\0'; ++i) {
+		word[i] = toupper(word[i]);
+	}
+
 	if (moveCheck == MOVE_SKIP) {
 		return MOVE_SKIP;
 	}
@@ -180,8 +184,12 @@ void executeMove(struct player* theplayer, int orient, struct coord * coords, ch
 			found = FALSE;
 			/* if letter already on board */
 			if (theplayer->curgame->theboard->matrix[i][coords->y].owner != NULL) {
+				/* remove score from owner */
+				theplayer->curgame->theboard->matrix[i][coords->y].owner->score -= theplayer->curgame->theboard->matrix[i][coords->y].score;
+				/* re-assign owner and add score to new owner */
 				theplayer->curgame->theboard->matrix[i][coords->y].owner = theplayer;
-				/* increment char spot */
+				theplayer->curgame->theboard->matrix[i][coords->y].owner->score += theplayer->curgame->theboard->matrix[i][coords->y].score;
+				/* increment char index */
 				++wordIndex;
 				continue;
 			}
@@ -189,7 +197,6 @@ void executeMove(struct player* theplayer, int orient, struct coord * coords, ch
 			index = 0, handLen = theplayer->hand->total_count;
 			for(hand = 0; handLen > hand; ++hand) {
 				if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
-					printf("letter found.\n");
 					index = hand;
 					found = TRUE;
 					/* reduce count of hand */
@@ -199,9 +206,11 @@ void executeMove(struct player* theplayer, int orient, struct coord * coords, ch
 			++wordIndex;
 			/* change values of indexed letter and place on board */
 			if(found == TRUE) {
-				printf("placing tile horizontally..\n");
 				theplayer->curgame->theboard->matrix[i][coords->y].letter = theplayer->hand->scores[index].letter;
 				theplayer->curgame->theboard->matrix[i][coords->y].owner = theplayer;
+				/* set the score for the node to new letter */
+				theplayer->curgame->theboard->matrix[i][coords->y].score = theplayer->hand->scores[index].score;
+				theplayer->curgame->theboard->matrix[i][coords->y].owner->score += theplayer->hand->scores[index].score;
 				theplayer->hand->scores[index].letter = EOF;
 				--theplayer->hand->scores[index].count;
 			}
@@ -213,7 +222,9 @@ void executeMove(struct player* theplayer, int orient, struct coord * coords, ch
 			found = FALSE;
 			/* if letter already on board */
 			if (theplayer->curgame->theboard->matrix[coords->x][i].owner != NULL) {
+				theplayer->curgame->theboard->matrix[coords->x][i].owner->score -= theplayer->curgame->theboard->matrix[i][coords->y].score;
 				theplayer->curgame->theboard->matrix[coords->x][i].owner = theplayer;
+				theplayer->curgame->theboard->matrix[coords->x][i].owner->score += theplayer->curgame->theboard->matrix[coords->x][i].score;
 				/* increment char spot */
 				++wordIndex;
 				continue;
@@ -231,9 +242,11 @@ void executeMove(struct player* theplayer, int orient, struct coord * coords, ch
 			++wordIndex;
 			/* change values of indexed letter and place on board */
 			if(found == TRUE) {
-				printf("placing tile vertically..\n");
 				theplayer->curgame->theboard->matrix[coords->x][i].letter = theplayer->hand->scores[index].letter;
 				theplayer->curgame->theboard->matrix[coords->x][i].owner = theplayer;
+				/* set the score for the node to new letter */
+				theplayer->curgame->theboard->matrix[coords->x][i].score = theplayer->hand->scores[index].score;
+				theplayer->curgame->theboard->matrix[coords->x][i].owner->score += theplayer->curgame->theboard->matrix[coords->x][i].score;
 				theplayer->hand->scores[index].letter = EOF;
 				--theplayer->hand->scores[index].count;
 			}

@@ -1,12 +1,13 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : S3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
 #include "game.h"
 #include "player.h"
+#include "board.h"
 
 void clear_buffer(void) {
 	int ch;
@@ -79,7 +80,6 @@ BOOLEAN game_init(struct game* thegame) {
 	thegame->theboard = malloc(sizeof(struct board));
 	/* create board, initialize and assign to board pointer in game */
 	*thegame->theboard = *new_board(width, height);
-	printf("height: %d width: %d random node: %d\n", thegame->theboard->height, thegame->theboard->width, thegame->theboard->matrix[0][1].letter);
 	return TRUE;
 }
 
@@ -100,27 +100,34 @@ void play_game(const char* scoresfile) {
 		normal_print("Input was cancelled. Exiting game. Thanks for playing. :)");
 		exit(0);
 	}
-	struct score_list scoreList;
-	scoreList = *load_scores(scoresfile);
+	thegame.score_list = malloc(sizeof(struct score_list));
+	*thegame.score_list = *load_scores(scoresfile);
+	if (thegame.score_list->total_count == EOF) {
+		clearMemory(&thegame);
+		quitFlag = TRUE;
+	}
 	/* flip coin for player turn */
 	thegame.curr_player_num = randomNumber(MAX_PLAYERS);
+	for (i = 0; MAX_PLAYERS > i; ++i) {
+		place_start_letters(&thegame.players[i]);
+	}
 	normal_print("Player %s will take the first turn.\n", thegame.players[thegame.curr_player_num].name);
 	/* game loop */
-	thegame.theboard->matrix[1][2].letter = 'F';
-	thegame.theboard->matrix[1][2].owner = &thegame.players[1];
-	thegame.theboard->matrix[1][0].letter = 'B';
-	thegame.theboard->matrix[1][0].owner = &thegame.players[0];
-	thegame.theboard->matrix[0][1].letter = 'Z';
-	thegame.theboard->matrix[0][1].owner = &thegame.players[1];
-	thegame.theboard->matrix[0][2].letter = 'X';
-	thegame.theboard->matrix[0][2].owner = &thegame.players[0];
 	while (quitFlag == FALSE) {
 		int moveCheck;
+		int winningPlayer;
+		winningPlayer = 0;
 		moveCheck = MOVE_INVALID;
-		deal_letters(&scoreList, thegame.players[thegame.curr_player_num].hand);
-		normal_print("\n");
-		normal_print("Player %s's turn.\nTheir hand contains: %c", thegame.players[thegame.curr_player_num].name);
-		normal_print("\n");
+		deal_letters(thegame.score_list, thegame.players[thegame.curr_player_num].hand);
+		/* if both players have no tiles left, trigger end flag */
+		if (thegame.players[thegame.curr_player_num].hand->total_count == 0
+				&& thegame.players[1 - thegame.curr_player_num].hand->total_count == 0) {
+			normal_print("There are no letters left. The game will end after this turn.\n");
+			quitFlag = TRUE;
+		}
+		normal_print("\nPlayer %s's turn.\n", thegame.players[thegame.curr_player_num].name);
+		calculate_score(&thegame.players[thegame.curr_player_num]);
+		normal_print("Their hand contains: ");
 		/* retry turn while invalid */
 		while (moveCheck == MOVE_INVALID ) {
 			for(i = 0; 5 > i; i++) {
@@ -128,33 +135,47 @@ void play_game(const char* scoresfile) {
 			}
 			normal_print("\n\n");
 			moveCheck = player_turn(&thegame.players[thegame.curr_player_num]);
+			if (moveCheck == MOVE_INVALID) {
+				error_print("That was not a valid move. Please try again.\n");
+			}
 		}
+
 		switch(moveCheck) {
-		/* determine score and winner here */
-		case(MOVE_BOARD_FULL) :
-			normal_print("Board is full. The winner is..\n");
-			quitFlag = TRUE;
-			break;
-		/* quit on player choice */
-		case(MOVE_QUIT) :
+			/* determine score and winner here */
+			case(MOVE_BOARD_FULL) :
+			/* quit on player choice */
+			case(MOVE_QUIT) :
+				for(i = 0; MAX_PLAYERS > i; i++) {
+					calculate_score(&thegame.players[i]);
+					if (thegame.players[i].score > thegame.players[winningPlayer].score) {
+						winningPlayer = i;
+					}
+				}
+			normal_print("The winner is %s with a score of %d!\n", thegame.players[winningPlayer].name, thegame.players[winningPlayer].score);
 			normal_print("Thanks for playing. \n");
 			quitFlag = TRUE;
 			break;
-		/* flip players turn on successful turn or skip - display msg if skip */
-		/* no break as it shares behavior with success other than alerting the user */
-		case(MOVE_SKIP) :
-			normal_print("Player %s has skipped their turn. \n", thegame.players[thegame.curr_player_num].name);
-		case(MOVE_SUCCESS) :
-			thegame.curr_player_num = 1 - thegame.curr_player_num;
-			++turnCount;
-			continue;
+			/* flip players turn on successful turn or skip - display msg if skip */
+			/* no break as it shares behavior with success other than alerting the user */
+			case(MOVE_SKIP) :
+				normal_print("Player %s has skipped their turn. \n", thegame.players[thegame.curr_player_num].name);
+			case(MOVE_SUCCESS) :
+				thegame.curr_player_num = 1 - thegame.curr_player_num;
+				++turnCount;
+				continue;
 		}
-
-
-
 	}
+	clearMemory(&thegame);
 }
-
+/* !!!!idk the error here... free not working :( !!!!*/
+void clearMemory(struct game *thegame) {
+	int i;
+	for (i = 0; MAX_PLAYERS > i; ++i) {
+		free(&thegame->players[i].hand);
+	}
+	free(&thegame->score_list);
+	free_cell(&thegame->theboard);
+}
 /* random number generator */
 int randomNumber(int max) {
 	int num;

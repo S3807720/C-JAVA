@@ -1,6 +1,6 @@
 /******************************************************************************
- * Student Name    :
- * RMIT Student ID :
+ * Student Name    : Luke Smith
+ * RMIT Student ID : S3807720
  *
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 2, study period 4, 2020.
@@ -27,6 +27,17 @@ struct board* new_board(int w, int h) {
 	/* initialize each cell */
 	init_cell(newBoard,w, h);
 	return newBoard;
+}
+/* and free allocated mem */
+/* !!!!idk the error here... free not working :( !!!!*/
+void free_cell(struct board* newBoard) {
+	int i;
+	i = 0;
+	while (newBoard->width > i) {
+		free(&newBoard->matrix[i]);
+		++i;
+	}
+	free(&newBoard);
 }
 
 /* print current board */
@@ -63,7 +74,6 @@ int print_board(struct board* newBoard) {
 	}
 	normal_print("\n");
 	if(nodeCount == (newBoard->height * newBoard->width)) {
-		printf("oop boards full");
 		return MOVE_BOARD_FULL;
 	}
 	return MOVE_SUCCESS;
@@ -77,26 +87,9 @@ void init_cell(struct board* newBoard,int width, int height) {
 		while (height > j) {
 			newBoard->matrix[i][j].owner = NULL;
 			newBoard->matrix[i][j].letter = EOF;
-			printf("+");
+			newBoard->matrix[i][j].score = EOF;
 			++j;
 		}
-		printf("\n");
 		++i;
 	}
-}
-
-void free_cell(struct board* newBoard) {
-	int i, j;
-	printf("starting to wipe board..\n");
-	i = 0;
-	while (newBoard->width > i) {
-		j = 0;
-		while (newBoard->height > j) {
-			free(newBoard->matrix[i]);
-			++j;
-		}
-		printf("\n");
-		++i;
-	}
-	free(newBoard);
 }
