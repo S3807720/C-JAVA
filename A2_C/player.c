@@ -47,10 +47,10 @@ BOOLEAN getString(char input[], int length, char* type) {
 }
 
 BOOLEAN createPlayer(struct game *thegame) {
+	char playerName[NAMELEN];
 	int errorCheck;
 	int count;
 	count = 0;
-	char playerName[NAMELEN];
 	while (MAX_PLAYERS > count) {
 		errorCheck = getString(playerName, NAMELEN+EXTRACHARS, "name");
 		if(errorCheck == MOVE_SKIP || errorCheck == MOVE_QUIT) {
@@ -67,11 +67,11 @@ BOOLEAN createPlayer(struct game *thegame) {
 
 BOOLEAN player_init(int count,const char *name,
 		struct game *thegame) {
+	int randCol, i;
+	randCol = randomNumber(MAX_COL);
 	thegame->players[count].curgame = thegame;
 	strcpy(thegame->players[count].name, name);
 	/* set semi random colour */
-	int randCol, i;
-	randCol = randomNumber(MAX_COL);
 	thegame->players[count].color = randCol;
 	thegame->players[count].score = 0;
 	thegame->players[count].hand = malloc(sizeof(struct score_list));
@@ -93,6 +93,7 @@ BOOLEAN player_init(int count,const char *name,
 enum move_result player_turn(struct player *theplayer) {
 	int moveCheck, orient, x, y, i;
 	char word[NAMELEN];
+	struct coord coords;
 	/* eof as default */
 	x = EOF, y = EOF, moveCheck = 0, orient = 0;
 	moveCheck = print_board(theplayer->curgame->theboard);
@@ -153,7 +154,6 @@ enum move_result player_turn(struct player *theplayer) {
 	else {
 		orient = VERT;
 	}
-	struct coord coords;
 	/*set coords to proper array vals */
 	coords.x = x-1, coords.y = y-1;
 	moveCheck = validate_move(theplayer, word, &coords, orient);
@@ -176,81 +176,79 @@ enum move_result player_turn(struct player *theplayer) {
 /* execute action */
 void executeMove(struct player* theplayer, int orient, struct coord * coords, char * word) {
 	/* generic i, index for position of found hand, placedTiles to keep track of how much to decrement hand */
-	int i, index, placedTiles, wordIndex;
-	placedTiles = 0, wordIndex = 0;
-	BOOLEAN found;
+	int i, index, placedTiles, wordIndex, hand, handLen, found, length, position;
+	length = strlen(word);
+	placedTiles = 0, wordIndex = 0, handLen = theplayer->hand->total_count;
 	if (orient == HORIZ) {
-		for (i = coords->x; theplayer->curgame->theboard->height > i; ++i) {
+		position = coords->x;
+		for (i = 0; length > i; ++i, ++wordIndex, ++position) {
 			found = FALSE;
 			/* if letter already on board */
-			if (theplayer->curgame->theboard->matrix[i][coords->y].owner != NULL) {
+			if (theplayer->curgame->theboard->matrix[position][coords->y].owner != NULL) {
 				/* remove score from owner */
-				theplayer->curgame->theboard->matrix[i][coords->y].owner->score -= theplayer->curgame->theboard->matrix[i][coords->y].score;
+				theplayer->curgame->theboard->matrix[position][coords->y].owner->score -= theplayer->curgame->theboard->matrix[position][coords->y].score;
 				/* re-assign owner and add score to new owner */
-				theplayer->curgame->theboard->matrix[i][coords->y].owner = theplayer;
-				theplayer->curgame->theboard->matrix[i][coords->y].owner->score += theplayer->curgame->theboard->matrix[i][coords->y].score;
-				/* increment char index */
-				++wordIndex;
-				continue;
+				theplayer->curgame->theboard->matrix[position][coords->y].owner = theplayer;
+				theplayer->curgame->theboard->matrix[position][coords->y].owner->score += theplayer->curgame->theboard->matrix[position][coords->y].score;
 			}
-			int hand, index, handLen;
-			index = 0, handLen = theplayer->hand->total_count;
-			for(hand = 0; handLen > hand; ++hand) {
-				if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
-					index = hand;
-					found = TRUE;
-					/* reduce count of hand */
-					++placedTiles;
+			else {
+				/* variable to store position of found card in hand */
+				index = 0;
+				for(hand = 0; handLen > hand; ++hand) {
+					if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
+						index = hand;
+						found = TRUE;
+						/* reduce count of hand */
+						++placedTiles;
+					}
+				}
+				/* change values of indexed letter and place on board */
+				if(found == TRUE) {
+					theplayer->curgame->theboard->matrix[position][coords->y].letter = theplayer->hand->scores[index].letter;
+					theplayer->curgame->theboard->matrix[position][coords->y].owner = theplayer;
+					/* update scores for node and player */
+					theplayer->curgame->theboard->matrix[position][coords->y].score = theplayer->hand->scores[index].score;
+					theplayer->curgame->theboard->matrix[position][coords->y].owner->score += theplayer->hand->scores[index].score;
+					theplayer->hand->scores[index].letter = EOF;
+					--theplayer->hand->scores[index].count;
 				}
 			}
-			++wordIndex;
-			/* change values of indexed letter and place on board */
-			if(found == TRUE) {
-				theplayer->curgame->theboard->matrix[i][coords->y].letter = theplayer->hand->scores[index].letter;
-				theplayer->curgame->theboard->matrix[i][coords->y].owner = theplayer;
-				/* set the score for the node to new letter */
-				theplayer->curgame->theboard->matrix[i][coords->y].score = theplayer->hand->scores[index].score;
-				theplayer->curgame->theboard->matrix[i][coords->y].owner->score += theplayer->hand->scores[index].score;
-				theplayer->hand->scores[index].letter = EOF;
-				--theplayer->hand->scores[index].count;
-			}
+
 		}
 	}
 	/* if vertical, do same w/ diff part of array */
 	else if (orient == VERT) {
-		for (i = coords->y; theplayer->curgame->theboard->width > i; ++i) {
+		position = coords->y;
+		for (i = 0; length > i; ++i, ++wordIndex, ++position) {
 			found = FALSE;
 			/* if letter already on board */
-			if (theplayer->curgame->theboard->matrix[coords->x][i].owner != NULL) {
-				theplayer->curgame->theboard->matrix[coords->x][i].owner->score -= theplayer->curgame->theboard->matrix[i][coords->y].score;
-				theplayer->curgame->theboard->matrix[coords->x][i].owner = theplayer;
-				theplayer->curgame->theboard->matrix[coords->x][i].owner->score += theplayer->curgame->theboard->matrix[coords->x][i].score;
-				/* increment char spot */
-				++wordIndex;
+			if (theplayer->curgame->theboard->matrix[coords->x][position].owner != NULL) {
+				theplayer->curgame->theboard->matrix[coords->x][position].owner->score -= theplayer->curgame->theboard->matrix[coords->x][position].score;
+				theplayer->curgame->theboard->matrix[coords->x][position].owner = theplayer;
+				theplayer->curgame->theboard->matrix[coords->x][position].owner->score += theplayer->curgame->theboard->matrix[coords->x][position].score;
 				continue;
 			}
-			int hand, index, handLen;
-			index = 0, handLen = theplayer->hand->num_scores;
-			for(hand = 0; handLen > hand; ++hand) {
-				if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
-					index = hand;
-					found = TRUE;
-					/* reduce count of hand */
-					++placedTiles;
+			else {
+				index = 0;
+				for(hand = 0; handLen > hand; ++hand) {
+					if (word[wordIndex] == theplayer->hand->scores[hand].letter) {
+						index = hand;
+						found = TRUE;
+						/* reduce count of hand */
+						++placedTiles;
+					}
+				}
+				/* change values of indexed letter and place on board */
+				if(found == TRUE) {
+					theplayer->curgame->theboard->matrix[coords->x][position].letter = theplayer->hand->scores[index].letter;
+					theplayer->curgame->theboard->matrix[coords->x][position].owner = theplayer;
+					/* update scores for node and player */
+					theplayer->curgame->theboard->matrix[coords->x][position].score = theplayer->hand->scores[index].score;
+					theplayer->curgame->theboard->matrix[coords->x][position].owner->score += theplayer->curgame->theboard->matrix[coords->x][position].score;
+					theplayer->hand->scores[index].letter = EOF;
+					--theplayer->hand->scores[index].count;
 				}
 			}
-			++wordIndex;
-			/* change values of indexed letter and place on board */
-			if(found == TRUE) {
-				theplayer->curgame->theboard->matrix[coords->x][i].letter = theplayer->hand->scores[index].letter;
-				theplayer->curgame->theboard->matrix[coords->x][i].owner = theplayer;
-				/* set the score for the node to new letter */
-				theplayer->curgame->theboard->matrix[coords->x][i].score = theplayer->hand->scores[index].score;
-				theplayer->curgame->theboard->matrix[coords->x][i].owner->score += theplayer->curgame->theboard->matrix[coords->x][i].score;
-				theplayer->hand->scores[index].letter = EOF;
-				--theplayer->hand->scores[index].count;
-			}
-
 		}
 	}
 	theplayer->hand->total_count -= placedTiles;

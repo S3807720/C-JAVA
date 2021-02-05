@@ -9,7 +9,10 @@
 #include "score_list.h"
 #include "shared.h"
 #include "game.h"
+#include "player.h"
+#include "board.h"
 #include <ctype.h>
+#include <string.h>
 
 #define delim ", \n"
 #define MAX_HAND 5
@@ -22,48 +25,79 @@
 struct score_list *load_scores(const char *filename) {
 	FILE *fpRead;
 	int i;
-	i = 0;
-	char line[NUM_SCORES], *ltr, *score, *cnt, *end, *ptr;
-	ltr = NULL, score = NULL, cnt = NULL, ptr = NULL;
+	/* pointers for strtok & line write var */
+	char line[NUM_SCORES], *ltr, *score, *cnt, *end;
 	struct score_list *scoreBoard;
 	struct score_list *error_list;
+	i = 0;
+	ltr = NULL, score = NULL, cnt = NULL;
 	error_list = malloc(sizeof(struct score_list));
 	error_list->total_count = EOF;
 	scoreBoard = malloc(sizeof(struct score_list));
 	scoreBoard->num_scores = 0;
 	scoreBoard->total_count = 0;
-	/* already verified file exists, no need to do anything */
+	/* double check file exists, this should never run, if it does - return a false list */
 	if ((fpRead = fopen(filename, "r")) == NULL) {
 		error_print("File cannot be opened.\n");
+		free(scoreBoard);
 		return error_list;
 	}
     /* loop through each line in file */
     while(fgets(line, sizeof(line), fpRead) != NULL){
+    	/* error if too many characters */
 		if (i == NUM_SCORES) {
 			error_print("There are too many letters in the file.\n");
+			free(scoreBoard);
 			return error_list;
 		}
         /*no need to convert the char to a long as we want the int value of the char */
-    	ltr = strtok_r(line, delim, &ptr);
-//    	if ((*ltr >= 'a' && *ltr <= 'z') || (*ltr >= 'A' && *ltr <= 'Z')) {
-//    		error_print("Invalid character detected in file.");
-//    		exit(0);
-//    	}
+    	ltr = strtok(line, delim);
 		scoreBoard->scores[i].letter = *ltr;
+		/* make sure it's alphabetical, else fail and quit out */
+    	if (isalpha(scoreBoard->scores[i].letter) == 0) {
+    		error_print("Invalid character detected in file.");
+			free(scoreBoard);
+    		return error_list;
+    	}
 		/*convert to upper if not */
 		scoreBoard->scores[i].letter = toupper(scoreBoard->scores[i].letter);
-    	score = strtok_r(NULL, delim, &ptr);
+    	score = strtok(NULL, delim);
     	scoreBoard->scores[i].score = (int) strtol(score, &end, 0);
-    	cnt = strtok_r(NULL, delim, &ptr);
+    	cnt = strtok(NULL, delim);
     	scoreBoard->scores[i].count = (int) strtol(cnt, &end, 0);
 		scoreBoard->total_count += scoreBoard->scores[i].count;
 		scoreBoard->num_scores += 1;
         /*go to next line */
 		++i;
     }
-	/* and close file */
+	/* check for dupes, return error if found */
+	if(detectDuplicateLetters(scoreBoard) == FALSE) {
+		error_print("Duplicate letters found.\n");
+		free(scoreBoard);
+		return error_list;
+	}
+	/* free error list as there's no errors and close file */
+	free(error_list);
+	error_list = NULL;
 	fclose(fpRead);
     return scoreBoard;
+}
+
+int detectDuplicateLetters(struct score_list *score_list) {
+	int i, j;
+	/* use i as the constant and compare against j scores, whilst skipping equal numbers */
+	for (i = 0; NUM_SCORES > i; ++i) {
+		for (j = 0; NUM_SCORES > j; ++j) {
+			if (j == i) {
+				continue;
+			}
+			/* false if dupe */
+			if(score_list->scores[i].letter == score_list->scores[j].letter) {
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
 }
 
 /**
@@ -84,12 +118,11 @@ void deal_letters(struct score_list *score_list,
 			continue;
 		}
 		/* transfer from scorelist to hand */
-		score_list->scores[random].count--;
-		score_list->total_count--;
+		--score_list->scores[random].count;
+		--score_list->total_count;
 		player_hand->scores[index] = score_list->scores[random];
 		player_hand->scores[index].count = 1;
-		player_hand->total_count++;
-		player_hand->num_scores++;
+		++player_hand->total_count;
 	}
 	/* if there are no scores left, alert the players */
 	if (score_list->total_count == 0){
@@ -102,10 +135,8 @@ void place_start_letters(struct player* theplayer) {
 	randomWid = randomNumber(theplayer->curgame->theboard->width);
 	randomHeight = randomNumber(theplayer->curgame->theboard->height);
 	randomLetter = randomNumber(theplayer->curgame->score_list->num_scores);
-	while (theplayer->curgame->theboard->matrix[randomWid][randomHeight].owner != NULL) {
-		randomWid = randomNumber(theplayer->curgame->theboard->width);
-		randomHeight = randomNumber(theplayer->curgame->theboard->height);
-		randomLetter = randomNumber(theplayer->curgame->score_list->num_scores);
+	if (theplayer->curgame->theboard->matrix[randomWid][randomHeight].owner != NULL) {
+		place_start_letters(theplayer);
 	}
 	theplayer->curgame->theboard->matrix[randomWid][randomHeight].letter = theplayer->curgame->score_list->scores[randomLetter].letter;
 	theplayer->curgame->theboard->matrix[randomWid][randomHeight].owner = theplayer;

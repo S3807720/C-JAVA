@@ -7,19 +7,25 @@
  *****************************************************************************/
 How do we use your program? 
 ---------------------------
-Simply enter the player names, and the width & height of the board.
+Simply enter the player names, and the width & height of the board to set up the game.
 Then everything will be set up with a few letters placed on the board at the start.
 Words must use letters already on the board.
-Pick a word and the coordinates, whichever letters you use on the board will be claimed as the
-player who's turn it is. When the board is full, a player pressed ctrl d to quit or there are no
-tiles left, the game will end and winner will be chosen.
+Pick a word and the coordinates, whichever letters you use on the board will be claimed by the player who initiated
+the action. When the board is full, a player pressed ctrl d to quit or there are no
+letters are left, the game will end and the winner will be chosen.
 
 Explain your reasoning behind the modifications you have made to the design of 
 the program
 ------------------------------------------------------------------------------
-Felt it was better to add a random letter on the board for each player to use rather than extra restrictions. 
-These will reward no points by default, but taking them will grant points and take points from the opposing player.
-I changed use of enum orientation to grab a 1 or 2 rather than h or v for simplicity. 
-Adds unnecessary complexity to grab a char then convert it to an integer anyway.
-Added score to the board nodes to avoid having to loop through every letter in the file and match them up to calculate the scores.
+For the most part i've kept the provided code inplace. And used the specs as a guide.
+Some changes:
+*Felt it was better to add a random letter on the board for each player to use rather than extra restrictions. 
+ These will reward no points by default, but taking them will grant points and take points from the opposing player.
+
+*I changed use of enum orientation to grab a 1 or 2 rather than h or v for simplicity. 
+ Adds unnecessary complexity to grab a char then convert it to an integer anyway. This is how it would be done
+ with a GUI anyway.
+
+*Added score to the board nodes to avoid having to loop through every letter 
+ in the file and match them up to calculate the scores.
 

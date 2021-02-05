@@ -43,7 +43,7 @@ int getInteger(int* integer, char* type) {
 
 			/* verify result. */
 			if (*end != 0) {
-				printf("Input was not numeric.\n");
+				normal_print("Input was not numeric.\n");
 			}
 			/* change flag to end loop if everything's A-OK */
 			else {
@@ -61,12 +61,11 @@ int getInteger(int* integer, char* type) {
  * what is required.
  **/
 BOOLEAN game_init(struct game* thegame) {
-	int errorCheck;
+	int errorCheck, width, height;
 	errorCheck = createPlayer(thegame);
 	if (errorCheck == FALSE) {
 		return FALSE;
 	}
-	int width, height;
 	/* if any values are empty, return exit function */
 	errorCheck = getInteger(&width, "width");
 	if (errorCheck == MOVE_SKIP || MOVE_QUIT) {
@@ -130,7 +129,7 @@ void play_game(const char* scoresfile) {
 		normal_print("Their hand contains: ");
 		/* retry turn while invalid */
 		while (moveCheck == MOVE_INVALID ) {
-			for(i = 0; 5 > i; i++) {
+			for(i = 0; MAXHAND > i; i++) {
 				normal_print("%c | ", thegame.players[thegame.curr_player_num].hand->scores[i].letter);
 			}
 			normal_print("\n\n");
@@ -151,10 +150,10 @@ void play_game(const char* scoresfile) {
 						winningPlayer = i;
 					}
 				}
-			normal_print("The winner is %s with a score of %d!\n", thegame.players[winningPlayer].name, thegame.players[winningPlayer].score);
-			normal_print("Thanks for playing. \n");
-			quitFlag = TRUE;
-			break;
+				normal_print("The winner is %s with a score of %d!\n", thegame.players[winningPlayer].name, thegame.players[winningPlayer].score);
+				normal_print("Thanks for playing. \n");
+				quitFlag = TRUE;
+				break;
 			/* flip players turn on successful turn or skip - display msg if skip */
 			/* no break as it shares behavior with success other than alerting the user */
 			case(MOVE_SKIP) :
@@ -167,15 +166,16 @@ void play_game(const char* scoresfile) {
 	}
 	clearMemory(&thegame);
 }
-/* !!!!idk the error here... free not working :( !!!!*/
+/* free mems !!!!*/
 void clearMemory(struct game *thegame) {
 	int i;
 	for (i = 0; MAX_PLAYERS > i; ++i) {
-		free(&thegame->players[i].hand);
+		free(thegame->players[i].hand);
 	}
-	free(&thegame->score_list);
-	free_cell(&thegame->theboard);
+	free(thegame->score_list);
+	free_cell(thegame->theboard);
 }
+
 /* random number generator */
 int randomNumber(int max) {
 	int num;

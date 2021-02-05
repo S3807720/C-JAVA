@@ -9,11 +9,13 @@
 #include <string.h>
 #include "shared.h"
 #include "game.h"
+#include "player.h"
+#include "board.h"
 
 /* use details to check every possibility for errors */
 BOOLEAN validate_move(struct player* theplayer, const char* word,
 		const struct coord* coords, enum orientation orient) {
-	int moveConfirm, i, length, ownedCells, wordIndex, handCheck, handCounter;
+	int moveConfirm, i, length, ownedCells, wordIndex, handCheck, handCounter, position;
 	wordIndex = 0;
 	moveConfirm = MOVE_INVALID;
 	/* count of nodes to ensure non empty spot */
@@ -21,19 +23,23 @@ BOOLEAN validate_move(struct player* theplayer, const char* word,
 	/* get length of word */
 	length = strlen(word);
 	if (orient == HORIZ) {
-		for (i = coords->x; theplayer->curgame->theboard->height > i; ++i){
+		/* set position to same val as coords and increment each loop */
+		position = coords->x;
+		/* loop until the difference between max width and coords input and length of string */
+		for (i = 0; (theplayer->curgame->theboard->width - coords->x) > i && strlen(word) > i;
+				++i, ++wordIndex, ++position){
 			handCheck = FALSE;
 			--length;
 			/* increment counter for nodes occupied & check if word choice is valid */
-			if (theplayer->curgame->theboard->matrix[i][coords->y].owner != NULL) {
-				if (theplayer->curgame->theboard->matrix[i][coords->y].letter != word[wordIndex]) {
+			if (theplayer->curgame->theboard->matrix[position][coords->y].owner != NULL) {
+				if (theplayer->curgame->theboard->matrix[position][coords->y].letter != word[wordIndex]) {
 					return MOVE_INVALID;
 				}
 				++ownedCells;
 				handCheck = TRUE;
 			}
-			/* check if player actually has the tile in hand */
-			else if (theplayer->curgame->theboard->matrix[i][coords->y].owner == NULL) {
+			/* otherwise check if player actually has the tile in hand */
+			else if (theplayer->curgame->theboard->matrix[position][coords->y].owner == NULL) {
 				for(handCounter = 0; theplayer->hand->total_count > handCounter; ++handCounter) {
 					if (word[wordIndex] == theplayer->hand->scores[handCounter].letter) {
 						handCheck = TRUE;
@@ -44,24 +50,28 @@ BOOLEAN validate_move(struct player* theplayer, const char* word,
 				error_print("You do not have that letter in your hand.\n");
 				return MOVE_INVALID;
 			}
-			++wordIndex;
 		}
-		if (length < 1) {
+		if (length < 1 && ownedCells < strlen(word)) {
 			moveConfirm = MOVE_SUCCESS;
 		}
 	}
 	else if (orient == VERT) {
-		for (i = coords->y; theplayer->curgame->theboard->width > i; ++i){
+		position = coords->y;
+		/* loop until the difference between max height and coords input */
+		for (i = 0; (theplayer->curgame->theboard->height - coords->y) > i && strlen(word) > i;
+				++i, ++wordIndex, ++position){
+			handCheck = FALSE;
 			--length;
 			/* increment counter for nodes occupied & check if word choice is valid */
-			if (theplayer->curgame->theboard->matrix[coords->x][i].owner != NULL) {
-				if (theplayer->curgame->theboard->matrix[coords->x][i].letter != word[wordIndex]) {
+			if (theplayer->curgame->theboard->matrix[coords->x][position].owner != NULL) {
+				if (theplayer->curgame->theboard->matrix[coords->x][position].letter != word[wordIndex]) {
 					return MOVE_INVALID;
 				}
 				++ownedCells;
+				handCheck = TRUE;
 			}
-			/* check if player actually has the tile in hand */
-			else if (theplayer->curgame->theboard->matrix[coords->x][i].owner == NULL) {
+			/* otherwise check if player actually has the tile in hand */
+			else if (theplayer->curgame->theboard->matrix[coords->x][position].owner == NULL) {
 				for(handCounter = 0; theplayer->hand->total_count > handCounter; ++handCounter) {
 					if (word[wordIndex] == theplayer->hand->scores[handCounter].letter) {
 						handCheck = TRUE;
@@ -72,16 +82,16 @@ BOOLEAN validate_move(struct player* theplayer, const char* word,
 				error_print("You do not have that letter in your hand.\n");
 				return MOVE_INVALID;
 			}
-			++wordIndex;
 		}
-		if (length < 1) {
+		/* if length is below 1 then there's enough space */
+		if (length < 1 && ownedCells < strlen(word)) {
 			moveConfirm = MOVE_SUCCESS;
 		}
 	}
 	if (moveConfirm != MOVE_SUCCESS || length > 0 || ownedCells == 0) {
 		return MOVE_INVALID;
 	}
-	return MOVE_SUCCESS;
+	return moveConfirm;
 }
 /* as there is a score already in the player struct, there's no real need to calculate it. easier to keep it up to date */
 int calculate_score(struct player* theplayer) {

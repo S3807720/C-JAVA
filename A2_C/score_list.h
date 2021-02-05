@@ -35,5 +35,5 @@ struct score_list {
 struct score_list *load_scores(const char *);
 void deal_letters(struct score_list *, struct score_list *);
 void place_start_letters(struct player *);
-
+int detectDuplicateLetters(struct score_list *);
 #endif

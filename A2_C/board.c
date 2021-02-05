@@ -21,7 +21,7 @@ struct board* new_board(int w, int h) {
 	newBoard->height = h;
 	/* allocate width/columns then go through each row and allocate rows */
 	newBoard->matrix = malloc(w * sizeof(struct cell));
-	for(i = 0; i < w; i++) {
+	for(i = 0; i < w; ++i) {
 		newBoard->matrix[i] = malloc(h * sizeof(struct cell));
 	}
 	/* initialize each cell */
@@ -34,10 +34,11 @@ void free_cell(struct board* newBoard) {
 	int i;
 	i = 0;
 	while (newBoard->width > i) {
-		free(&newBoard->matrix[i]);
+		free(newBoard->matrix[i]);
 		++i;
 	}
-	free(&newBoard);
+	free(newBoard->matrix);
+	free(newBoard);
 }
 
 /* print current board */
@@ -59,9 +60,8 @@ int print_board(struct board* newBoard) {
 		for (j = 0; newBoard->width > j; ++j) {
 			/* if has a owner, print the char */
 			if (newBoard->matrix[j][i].owner != NULL) {
-//				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
-//						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
-//				normal_print("%c%s", newBoard->matrix[j][i].letter, newBoard->matrix[j][i].owner->name);
+/*				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
+						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);*/
 				normal_print("%c | ", newBoard->matrix[j][i].letter);
 				++nodeCount;
 			}
@@ -79,6 +79,7 @@ int print_board(struct board* newBoard) {
 	return MOVE_SUCCESS;
 }
 
+/* initialize each cell to default values */
 void init_cell(struct board* newBoard,int width, int height) {
 	int i, j;
 	i = 0;
