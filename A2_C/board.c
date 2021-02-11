@@ -28,8 +28,8 @@ struct board* new_board(int w, int h) {
 	init_cell(newBoard,w, h);
 	return newBoard;
 }
+
 /* and free allocated mem */
-/* !!!!idk the error here... free not working :( !!!!*/
 void free_cell(struct board* newBoard) {
 	int i;
 	i = 0;
@@ -60,9 +60,9 @@ int print_board(struct board* newBoard) {
 		for (j = 0; newBoard->width > j; ++j) {
 			/* if has a owner, print the char */
 			if (newBoard->matrix[j][i].owner != NULL) {
-/*				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
-						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);*/
-				normal_print("%c | ", newBoard->matrix[j][i].letter);
+				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
+						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
+				/*normal_print("%c | ", newBoard->matrix[j][i].letter);*/
 				++nodeCount;
 			}
 			/* otherwise empty spot */

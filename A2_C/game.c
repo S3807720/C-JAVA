@@ -9,6 +9,7 @@
 #include "player.h"
 #include "board.h"
 
+/* courtesy of teach, Paul Miller */
 void clear_buffer(void) {
 	int ch;
 	while (ch = getc(stdin), ch != EOF && ch != '\n')
@@ -62,6 +63,7 @@ int getInteger(int* integer, char* type) {
  **/
 BOOLEAN game_init(struct game* thegame) {
 	int errorCheck, width, height;
+	/* grab inputs and if an error is returned, do appropriate action */
 	errorCheck = createPlayer(thegame);
 	if (errorCheck == FALSE) {
 		return FALSE;
@@ -93,6 +95,7 @@ void play_game(const char* scoresfile) {
 	struct game thegame;
 	int errorCheck, i, turnCount, quitFlag;
 	turnCount = 0, quitFlag = FALSE;
+	/* seed timer, seems to be more random when placed here */
 	srand(time(NULL));
 	errorCheck = game_init(&thegame);
 	if (errorCheck == FALSE) {
@@ -101,22 +104,32 @@ void play_game(const char* scoresfile) {
 	}
 	thegame.score_list = malloc(sizeof(struct score_list));
 	*thegame.score_list = *load_scores(scoresfile);
+	/* exit game if error in scores */
 	if (thegame.score_list->total_count == EOF) {
 		clearMemory(&thegame);
 		quitFlag = TRUE;
 	}
-	/* flip coin for player turn */
+	/* "flip coin" for player turn */
 	thegame.curr_player_num = randomNumber(MAX_PLAYERS);
+	/* place 2 starting letters */
 	for (i = 0; MAX_PLAYERS > i; ++i) {
 		place_start_letters(&thegame.players[i]);
 	}
+	/* perhaps a more elegant solution could be found, but this adds more starting letters if the board is large */
+	if (thegame.theboard->height >= MAXHAND) {
+		for (i = 0; MAX_PLAYERS > i; ++i) {
+			place_start_letters(&thegame.players[i]);
+		}
+	}
 	normal_print("Player %s will take the first turn.\n", thegame.players[thegame.curr_player_num].name);
-	/* game loop */
+	/* game loop while the flag is not triggered, end game if it is */
 	while (quitFlag == FALSE) {
 		int moveCheck;
+		/* index for winner */
 		int winningPlayer;
 		winningPlayer = 0;
 		moveCheck = MOVE_INVALID;
+		/* deal out letters/tiles at the start of each turn */
 		deal_letters(thegame.score_list, thegame.players[thegame.curr_player_num].hand);
 		/* if both players have no tiles left, trigger end flag */
 		if (thegame.players[thegame.curr_player_num].hand->total_count == 0
@@ -125,6 +138,7 @@ void play_game(const char* scoresfile) {
 			quitFlag = TRUE;
 		}
 		normal_print("\nPlayer %s's turn.\n", thegame.players[thegame.curr_player_num].name);
+		/* print out score and other details */
 		calculate_score(&thegame.players[thegame.curr_player_num]);
 		normal_print("Their hand contains: ");
 		/* retry turn while invalid */

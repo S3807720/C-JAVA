@@ -11,6 +11,7 @@
 
 struct player;
 
+/* added score to make it easier to calculate each players */
 struct cell {
     struct player* owner;
     int letter;

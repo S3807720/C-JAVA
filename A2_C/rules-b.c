@@ -93,7 +93,8 @@ BOOLEAN validate_move(struct player* theplayer, const char* word,
 	}
 	return moveConfirm;
 }
-/* as there is a score already in the player struct, there's no real need to calculate it. easier to keep it up to date */
+/* as there is a score already in the player struct, there's no real need to calculate it. easier to keep it up to date,
+ * this will just display the results or if the player somehow doesn't exist, error? */
 int calculate_score(struct player* theplayer) {
 	if (!theplayer->name) {
 		error_print("This player doesn't exist.\n");

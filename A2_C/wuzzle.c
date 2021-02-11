@@ -15,16 +15,17 @@ int main(int argc, char* argv[]) {
 	 **/
 	FILE *fpRead;
 	char *fileName = argv[1];
+	/* error and buh-bye if invalid argument */
 	if(argc != NUM_ARGS) {
 		fprintf(stderr, "Error: invalid arguments passed in.\n");
 		return EXIT_FAILURE;
 	}
 	/* read only mode to ensure file exists */
-	/*char *fileName = "C:\\Users\\l\\Documents\\eclipse-workspace\\A2_C\\Debug\\word_scores.txt";*/
 	if ((fpRead = fopen(fileName, "r")) == NULL) {
 		fprintf(stderr, "Error: file does not exist. Exiting game.\n");
 		return EXIT_FAILURE;
 	}
+	/* gots to close the file read :) */
 	fclose(fpRead);
 	play_game(fileName);
 	return EXIT_SUCCESS;

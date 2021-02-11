@@ -39,7 +39,6 @@ struct score_list *load_scores(const char *filename) {
 	/* double check file exists, this should never run, if it does - return a false list */
 	if ((fpRead = fopen(filename, "r")) == NULL) {
 		error_print("File cannot be opened.\n");
-		free(scoreBoard);
 		return error_list;
 	}
     /* loop through each line in file */
@@ -47,7 +46,6 @@ struct score_list *load_scores(const char *filename) {
     	/* error if too many characters */
 		if (i == NUM_SCORES) {
 			error_print("There are too many letters in the file.\n");
-			free(scoreBoard);
 			return error_list;
 		}
         /*no need to convert the char to a long as we want the int value of the char */
@@ -56,7 +54,6 @@ struct score_list *load_scores(const char *filename) {
 		/* make sure it's alphabetical, else fail and quit out */
     	if (isalpha(scoreBoard->scores[i].letter) == 0) {
     		error_print("Invalid character detected in file.");
-			free(scoreBoard);
     		return error_list;
     	}
 		/*convert to upper if not */
@@ -73,7 +70,6 @@ struct score_list *load_scores(const char *filename) {
 	/* check for dupes, return error if found */
 	if(detectDuplicateLetters(scoreBoard) == FALSE) {
 		error_print("Duplicate letters found.\n");
-		free(scoreBoard);
 		return error_list;
 	}
 	/* free error list as there's no errors and close file */
@@ -83,6 +79,7 @@ struct score_list *load_scores(const char *filename) {
     return scoreBoard;
 }
 
+/* brute force every combination to ensure no duplicate letters are found */
 int detectDuplicateLetters(struct score_list *score_list) {
 	int i, j;
 	/* use i as the constant and compare against j scores, whilst skipping equal numbers */
@@ -120,7 +117,8 @@ void deal_letters(struct score_list *score_list,
 		/* transfer from scorelist to hand */
 		--score_list->scores[random].count;
 		--score_list->total_count;
-		player_hand->scores[index] = score_list->scores[random];
+		player_hand->scores[index].letter = score_list->scores[random].letter;
+		player_hand->scores[index].score = score_list->scores[random].score;
 		player_hand->scores[index].count = 1;
 		++player_hand->total_count;
 	}
@@ -135,6 +133,7 @@ void place_start_letters(struct player* theplayer) {
 	randomWid = randomNumber(theplayer->curgame->theboard->width);
 	randomHeight = randomNumber(theplayer->curgame->theboard->height);
 	randomLetter = randomNumber(theplayer->curgame->score_list->num_scores);
+	/* if the same node, recurse until it's unique */
 	if (theplayer->curgame->theboard->matrix[randomWid][randomHeight].owner != NULL) {
 		place_start_letters(theplayer);
 	}
