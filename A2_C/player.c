@@ -9,6 +9,8 @@
 #include "game.h"
 #include "board.h"
 #include <ctype.h>
+#include "word_list.h"
+
 #define MAX_COL 7
 /* the color_strings array that defines the color codes for the printing
  * out colour in the terminal. The order of the values in this array is the
@@ -107,8 +109,20 @@ enum move_result player_turn(struct player *theplayer) {
 		return MOVE_BOARD_FULL;
 	}
 	/* grab word */
-	moveCheck = getString(word, NAMELEN+EXTRACHARS, "word");
-	/* get length for use in loops and convert to upper */
+	moveCheck = getString(word, NAMELEN+EXTRACHARS, "word - :add, :delete, :help or :save for list actions.");
+	if (moveCheck == MOVE_SKIP) {
+		return MOVE_SKIP;
+	}
+	else if (moveCheck == MOVE_QUIT) {
+		return MOVE_QUIT;
+	}
+	/* check if index 0 is : and send to appropriate function */
+	if (word[0] == ':') {
+		listMenu(theplayer->curgame->word_list, word);
+		/* and back to the top */
+		return MOVE_WL_ACTION;
+	}
+	/* get length for use in loops and convert word to upper */
 	length = strlen(word);
 	for(i = 0; length > i; ++i) {
 		word[i] = toupper(word[i]);

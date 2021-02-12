@@ -8,6 +8,7 @@
 #include "game.h"
 #include "player.h"
 #include "board.h"
+#include "word_list.h"
 
 /* courtesy of teach, Paul Miller */
 void clear_buffer(void) {
@@ -91,12 +92,18 @@ BOOLEAN game_init(struct game* thegame) {
  * it is and handle cleaning up and quitting the program when a player quits the
  * game.
  **/
-void play_game(const char* scoresfile) {
+void play_game(const char* scoresfile, const char* wordFile) {
 	struct game thegame;
 	int errorCheck, i, turnCount, quitFlag;
 	turnCount = 0, quitFlag = FALSE;
 	/* seed timer, seems to be more random when placed here */
 	srand(time(NULL));
+	thegame.word_list = malloc(sizeof(struct word_list));
+	thegame.word_list = readFile(wordFile);
+	if (thegame.word_list->head == NULL) {
+		error_print("Fatal error detected in reading file. Exiting game.\n");
+		exit(0);
+	}
 	errorCheck = game_init(&thegame);
 	if (errorCheck == FALSE) {
 		normal_print("Input was cancelled. Exiting game. Thanks for playing. :)");
@@ -147,6 +154,9 @@ void play_game(const char* scoresfile) {
 				normal_print("%c | ", thegame.players[thegame.curr_player_num].hand->scores[i].letter);
 			}
 			normal_print("\n\n");
+			/* return invalid if invalid and try repeat, return an alternate value for
+			 * actions regarding word_list and repeat turn. redundant to check for the value
+			 */
 			moveCheck = player_turn(&thegame.players[thegame.curr_player_num]);
 			if (moveCheck == MOVE_INVALID) {
 				error_print("That was not a valid move. Please try again.\n");

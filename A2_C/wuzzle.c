@@ -14,19 +14,24 @@ int main(int argc, char* argv[]) {
 	 * play_game()
 	 **/
 	FILE *fpRead;
-	char *fileName = argv[1];
+	char *scoreFile = argv[1];
+	char *wordFile = argv[2];
 	/* error and buh-bye if invalid argument */
 	if(argc != NUM_ARGS) {
 		fprintf(stderr, "Error: invalid arguments passed in.\n");
 		return EXIT_FAILURE;
 	}
 	/* read only mode to ensure file exists */
-	if ((fpRead = fopen(fileName, "r")) == NULL) {
-		fprintf(stderr, "Error: file does not exist. Exiting game.\n");
+	if ((fpRead = fopen(scoreFile, "r")) == NULL) {
+		fprintf(stderr, "Error: score file does not exist. Exiting game.\n");
+		return EXIT_FAILURE;
+	}
+	if ((fpRead = fopen(wordFile, "r")) == NULL) {
+		fprintf(stderr, "Error: word file does not exist. Exiting game.\n");
 		return EXIT_FAILURE;
 	}
 	/* gots to close the file read :) */
 	fclose(fpRead);
-	play_game(fileName);
+	play_game(scoreFile, wordFile);
 	return EXIT_SUCCESS;
 }

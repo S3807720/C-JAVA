@@ -8,17 +8,17 @@
 #include "shared.h"
 #ifndef WORDLIST_H
 #define WORDLIST_H
-#define LTR_LIMIT 80
+#include "player.h"
 
 struct word_node {
     struct word_node * next;
-    const char * word;
+    char word[NAMELEN];
 };
 
 struct word_list {
     struct word_node * head;
     long num_words;
-    int (*cmp)(const void*,const void*);
+    int (*cmp)(const char*, const char*);
     void (*data_free)(void*);
 };
 
@@ -27,4 +27,13 @@ struct word_list {
  * list here.
  **/
 BOOLEAN is_in_dictionary(struct word_list *, const char *);
+struct word_list * readFile(const char*);
+BOOLEAN list_add(struct word_list *, char *);
+BOOLEAN list_init(struct word_list * list, int(*cmp)(const char*,const char*), void (*word_free)(void*));
+int word_cmp(const char*, const char*);
+void word_free(void*);
+void listMenu( struct word_list *, char *);
+int addWord(struct word_list *, int);
+int list_remove(struct word_list *, char *);
+
 #endif

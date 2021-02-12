@@ -1,0 +1,5 @@
+I changed the const char pointer in word_node to a char array to hold the words to keep the words in a single place, 
+instead of pointing to random memory. This makes it easier to manage and reduces the chance of error as there is no malloc or free
+involved. Alternative would be create an array of strings, or turn each word into a struct. But this is more elegant I think.
+
+Added word_list pointer in the game struct for easier access during the game.

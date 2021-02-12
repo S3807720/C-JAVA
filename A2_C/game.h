@@ -16,17 +16,18 @@
 #ifndef GAME_H
 #define GAME_H
 #define MAX_PLAYERS 2
-#define NUM_ARGS 2
+#define NUM_ARGS 3
 
 struct game {
     struct player players[MAX_PLAYERS];
     int curr_player_num;
     struct board* theboard;
     struct score_list* score_list;
+    struct word_list* word_list;
 };
 
 BOOLEAN game_init(struct game*);
-void play_game(const char*);
+void play_game(const char*, const char*);
 void createHand(struct score_list *, struct game*);
 BOOLEAN file_exists (char *filename);
 int error_print(const char *format, ...);

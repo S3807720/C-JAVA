@@ -15,7 +15,9 @@ enum move_result {
     MOVE_SUCCESS,
     MOVE_BOARD_FULL,
 	/* add value for try again */
-	MOVE_INVALID
+	MOVE_INVALID,
+	/* filler value for word list action */
+	MOVE_WL_ACTION
 };
 struct coord {
     int x, y;
