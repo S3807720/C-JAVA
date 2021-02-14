@@ -45,9 +45,9 @@ void free_cell(struct board* newBoard) {
 int print_board(struct board* newBoard) {
 	int i, j, nodeCount;
 	nodeCount = 0;
-	normal_print("  | ");
+	normal_print("\n%3c|", ' ');
 	for (i = 0; newBoard->width > i; ++i) {
-		normal_print("%d | ", i+1);
+		normal_print("%3d|", i+1);
 	}
 	normal_print("\n");
 	/* go through each row, left to right */
@@ -56,18 +56,18 @@ int print_board(struct board* newBoard) {
 		for(j = 0; newBoard->width > j; ++j) {
 			normal_print("-----");
 		}
-		normal_print("\n%d | ", i+1);
+		normal_print("\n%3d|", i+1);
 		for (j = 0; newBoard->width > j; ++j) {
 			/* if has a owner, print the char */
 			if (newBoard->matrix[j][i].owner != NULL) {
-				normal_print("%s%c%s | ", color_strings[newBoard->matrix[j][i].owner->color],
+				normal_print("%s%3c%s|", color_strings[newBoard->matrix[j][i].owner->color],
 						newBoard->matrix[j][i].letter, color_strings[COL_RESET]);
-				/*normal_print("%c | ", newBoard->matrix[j][i].letter);*/
+			/*	normal_print("%3c|", newBoard->matrix[j][i].letter);*/
 				++nodeCount;
 			}
 			/* otherwise empty spot */
 			else {
-				normal_print("  | ");
+				normal_print("%3c|", ' ');
 			}
 		}
 		normal_print("\n");

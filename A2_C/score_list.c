@@ -25,10 +25,13 @@
 struct score_list *load_scores(const char *filename) {
 	FILE *fpRead;
 	int i;
+	clock_t start, clockEnd;
+	double elapsed;
 	/* pointers for strtok & line write var */
 	char line[NUM_SCORES], *ltr, *score, *cnt, *end;
 	struct score_list *scoreBoard;
 	struct score_list *error_list;
+	start = clock();
 	i = 0;
 	ltr = NULL, score = NULL, cnt = NULL;
 	error_list = malloc(sizeof(struct score_list));
@@ -75,6 +78,9 @@ struct score_list *load_scores(const char *filename) {
 	/* free error list as there's no errors and close file */
 	free(error_list);
 	error_list = NULL;
+	clockEnd = clock();
+	elapsed = ((double) (clockEnd-start)) / CLOCKS_PER_SEC;
+    normal_print("Time taken to read score list was %.9f seconds.\n", elapsed);
 	fclose(fpRead);
     return scoreBoard;
 }

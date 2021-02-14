@@ -11,6 +11,7 @@
 #include "game.h"
 #include "player.h"
 #include "board.h"
+#include "word_list.h"
 
 /* use details to check every possibility for errors */
 BOOLEAN validate_move(struct player* theplayer, const char* word,
@@ -88,9 +89,13 @@ BOOLEAN validate_move(struct player* theplayer, const char* word,
 			moveConfirm = MOVE_SUCCESS;
 		}
 	}
+	/* ensure words in the list */
+	moveConfirm = find_word(theplayer->curgame->word_list, word);
+	/* final confirmation that nothing went wrong :) */
 	if (moveConfirm != MOVE_SUCCESS || length > 0 || ownedCells == 0) {
 		return MOVE_INVALID;
 	}
+	/* and wow, made it to the finish line! */
 	return moveConfirm;
 }
 /* as there is a score already in the player struct, there's no real need to calculate it. easier to keep it up to date,

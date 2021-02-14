@@ -1,0 +1,49 @@
+I changed the const char pointer in word_node to a char array to hold the words to keep the words in a single place, 
+instead of pointing to other memory. This makes it easier to manage and reduces the chance of error as there 
+is no malloc or free involved for anything other than the node. Alternative would be create an array of strings, or turn each word into a struct. 
+But this is more elegant, and a simpler solution I think.
+
+Added word_list pointer in the game struct for easier access during the game, allowing it to be passed to
+appropriate functions to edit the list or check if the word is valid. 
+
+As with the previous assignment, I've utilized a null list to return if something goes wrong with the word list.
+This is a good solution to keep the struct pointer type for easy returns to give access to the list throughout the game.
+
+With the :*** commands I've used strtok to split the string, with the delim being a space. If it is not any of the
+commands, it'll return an error and display the help menu. If it's add, delete or filename it'll read every alphabetical character
+and stop at the end or the next space(ignoring anything after). 
+
+As with the scorelist, i've added safety nets to prevent non illegal characters from being read. If the file cannot  be read, 
+or an invalid character is detected, it will display an error message and terminate the application. However if the file cannot be written to
+in the midst of the game, it simply will not save and display the error, but will not terminate.  
+
+5_1000
+read 0.005 / 0.003 / 0.004
+delete final word 0.001 ...
+0.005s / 0.001 to save
+insignificant -> 0.001 free
+read scores = less than 10 decimal fraction
+
+5_10000
+read 0.227 / 0.307 / 0.312
+delete 0.002 / 0.001
+save 0.007 / 0.008
+free 0.001
+
+20_10000
+read 0.204 / 0.3/ 0.303
+remove 0.001 / 
+save 0.009 / 0.013 / 0.007
+free 0.***
+
+5_100000
+load 4.293
+delete 0.001 / 0.002
+save 0.01 / 0.011
+free 0.001 
+
+45_100000
+load 39.595 /32.592 / 37.682
+delete 0.005/0.002
+save 0.019 / 0.017
+free 0.011 / 0.004 / 0.003

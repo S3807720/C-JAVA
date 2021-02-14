@@ -98,15 +98,11 @@ void play_game(const char* scoresfile, const char* wordFile) {
 	turnCount = 0, quitFlag = FALSE;
 	/* seed timer, seems to be more random when placed here */
 	srand(time(NULL));
-	thegame.word_list = malloc(sizeof(struct word_list));
+	/* read in words */
 	thegame.word_list = readFile(wordFile);
 	if (thegame.word_list->head == NULL) {
 		error_print("Fatal error detected in reading file. Exiting game.\n");
-		exit(0);
-	}
-	errorCheck = game_init(&thegame);
-	if (errorCheck == FALSE) {
-		normal_print("Input was cancelled. Exiting game. Thanks for playing. :)");
+		clearMemory(&thegame);
 		exit(0);
 	}
 	thegame.score_list = malloc(sizeof(struct score_list));
@@ -114,7 +110,12 @@ void play_game(const char* scoresfile, const char* wordFile) {
 	/* exit game if error in scores */
 	if (thegame.score_list->total_count == EOF) {
 		clearMemory(&thegame);
-		quitFlag = TRUE;
+		exit(0);
+	}
+	errorCheck = game_init(&thegame);
+	if (errorCheck == FALSE) {
+		normal_print("Input was cancelled. Exiting game. Thanks for playing. :)");
+		exit(0);
 	}
 	/* "flip coin" for player turn */
 	thegame.curr_player_num = randomNumber(MAX_PLAYERS);
@@ -188,6 +189,7 @@ void play_game(const char* scoresfile, const char* wordFile) {
 				continue;
 		}
 	}
+	save_list(thegame.word_list, wordFile);
 	clearMemory(&thegame);
 }
 /* free mems !!!!*/
@@ -197,6 +199,8 @@ void clearMemory(struct game *thegame) {
 		free(thegame->players[i].hand);
 	}
 	free(thegame->score_list);
+	list_free(thegame->word_list);
+	free(thegame->word_list);
 	free_cell(thegame->theboard);
 }
 

@@ -26,6 +26,7 @@ int main(int argc, char* argv[]) {
 		fprintf(stderr, "Error: score file does not exist. Exiting game.\n");
 		return EXIT_FAILURE;
 	}
+	fclose(fpRead);
 	if ((fpRead = fopen(wordFile, "r")) == NULL) {
 		fprintf(stderr, "Error: word file does not exist. Exiting game.\n");
 		return EXIT_FAILURE;
