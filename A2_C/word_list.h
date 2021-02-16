@@ -6,9 +6,10 @@
  * Assignment 3, study period 4, 2020.
  *****************************************************************************/
 #include "shared.h"
+#include "player.h"
+
 #ifndef WORDLIST_H
 #define WORDLIST_H
-#include "player.h"
 
 struct word_node {
     struct word_node * next;

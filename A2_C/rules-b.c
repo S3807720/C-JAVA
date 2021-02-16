@@ -5,9 +5,8 @@
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
-#include "rules-b.h"
 #include <string.h>
-#include "shared.h"
+#include "rules-b.h"
 #include "game.h"
 #include "player.h"
 #include "board.h"

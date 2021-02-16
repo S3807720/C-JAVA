@@ -9,7 +9,6 @@
 #include "score_list.h"
 #include "shared.h"
 #include "game.h"
-#include "player.h"
 #include "board.h"
 #include <ctype.h>
 #include <string.h>

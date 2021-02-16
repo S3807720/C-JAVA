@@ -6,9 +6,7 @@
  * Assignment 2, study period 4, 2020.
  *****************************************************************************/
 #include "game.h"
-#include "player.h"
 #include "board.h"
-#include "word_list.h"
 
 /* courtesy of teach, Paul Miller */
 void clear_buffer(void) {
@@ -64,19 +62,30 @@ int getInteger(int* integer, char* type) {
  **/
 BOOLEAN game_init(struct game* thegame) {
 	int errorCheck, width, height;
+	width = 0, height = 0;
 	/* grab inputs and if an error is returned, do appropriate action */
 	errorCheck = createPlayer(thegame);
 	if (errorCheck == FALSE) {
 		return FALSE;
 	}
 	/* if any values are empty, return exit function */
-	errorCheck = getInteger(&width, "width");
-	if (errorCheck == MOVE_SKIP || MOVE_QUIT) {
-		return FALSE;
+	while (width < 2) {
+		errorCheck = getInteger(&width, "width");
+		if (errorCheck == MOVE_SKIP || MOVE_QUIT) {
+			return FALSE;
+		}
+		if (width < 2) {
+			error_print("Width must be 2 or higher.\n");
+		}
 	}
-	errorCheck = getInteger(&height, "height");
-	if (errorCheck == MOVE_SKIP ||  MOVE_QUIT) {
-		return FALSE;
+	while (height < 2 ) {
+		errorCheck = getInteger(&height, "height");
+		if (errorCheck == MOVE_SKIP ||  MOVE_QUIT) {
+			return FALSE;
+		}
+		if (height < 2 ) {
+			error_print("Height must be 2 or higher.\n");
+		}
 	}
 	/* allocate memory for pointer */
 	thegame->theboard = malloc(sizeof(struct board));

@@ -8,8 +8,8 @@
 #include "player.h"
 #include "game.h"
 #include "board.h"
-#include <ctype.h>
 #include "word_list.h"
+#include <ctype.h>
 
 #define MAX_COL 7
 /* the color_strings array that defines the color codes for the printing

@@ -5,14 +5,14 @@
  * Startup code provided by Paul Miller for use in "Programming in C",
  * Assignment 3, study period 4, 2020.
  *****************************************************************************/
-#include "word_list.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include "shared.h"
+#include "word_list.h"
 #include "game.h"
+
 /* max length in files is 45 */
 #define FILELEN 45
 

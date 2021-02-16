@@ -7,6 +7,8 @@
  *****************************************************************************/
 #include "player.h"
 #include "score_list.h"
+#include "word_list.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

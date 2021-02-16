@@ -7,6 +7,7 @@
  *****************************************************************************/
 #include "board.h"
 #include "game.h"
+#include "rules-b.h"
 
 #include <assert.h>
 #include <stdio.h>
