@@ -12,12 +12,18 @@ public class PlayerImpl implements Player {
 	private ArrayList<Bet> bets = new ArrayList<Bet>();
 	private final int initialPoints; //should not be changed??
 	private int totalBet = 0, currentBets = 0;
-	
+
 	public PlayerImpl(String id, String name, int initialPoints) {
-		if (id == "" || name == "" || initialPoints < 0) {
-			throw new IllegalArgumentException();
-		} else if (id == null || name == null) {
-			throw new NullPointerException();
+		if (id.isBlank()) {
+			throw new IllegalArgumentException("ID must not be empty.");
+		}if (name.isBlank()) {
+			throw new IllegalArgumentException("Name must not be empty.");
+		}if (initialPoints < 0) {
+			throw new IllegalArgumentException("Points must not be empty.");
+		}if (id == null) {
+			throw new NullPointerException("Id must not be empty.");
+		}if (name == null) {
+			throw new NullPointerException("Name must not be empty.");
 		}
 		this.id = id;
 		this.name = name;
@@ -62,18 +68,18 @@ public class PlayerImpl implements Player {
 		for(int i = 0; bets.size() > i; i++) {
 			betAmount += bets.get(i).getAmount();
 		}
-		
-		
+
+
 		return betAmount;
 	}
 
 	@Override
 	public void acceptBet(Bet bet) {
 		if (bet == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("This bet is invalid.");
 		}
 		if (this.equals(bet.getPlayer()) == false ) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("This bet doesn't belong to this player.");
 		}
 		bets.add(bet);
 		totalBet += bet.getAmount();
@@ -81,14 +87,20 @@ public class PlayerImpl implements Player {
 		currentBets++;
 	}
 
-	
+
 	@Override
 	public void cancelBet(Bet bet) {
 		if (bet == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("This bet is invalid.");
 		}
-		if (bet.isWin() || this.equals(bet.getPlayer()) == false || !findBet(bet)) {
-			throw new IllegalStateException();
+		if (this.equals(bet.getPlayer()) == false ) {
+			throw new IllegalArgumentException("This bet doesn't belong to this player.");
+		}
+		if (bet.isWin()) {
+			throw new IllegalStateException("This bet has already won.");
+		}
+		if (!findBet(bet)) {
+			throw new IllegalStateException("This bet does not exist.");
 		}
 		int i; 
 		for (i = 0; bets.size() > i; i++) {
@@ -101,7 +113,7 @@ public class PlayerImpl implements Player {
 			}
 		}
 	}
-	
+
 	private boolean findBet(Bet bet) {
 		for (int i = 0; bets.size() > i; i++) {
 			if (bets.get(i).equals(bet)) {
@@ -114,12 +126,18 @@ public class PlayerImpl implements Player {
 	@Override
 	public void applyBetOutcome(Bet bet) {
 		if (bet == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("This bet is invalid.");
 		}
-		if (bet.getWinningPocket() == null || this.equals(bet.getPlayer()) == false || !findBet(bet)) {
-			throw new IllegalStateException();
+		if (this.equals(bet.getPlayer()) == false ) {
+			throw new IllegalArgumentException("This bet doesn't belong to this player.");
 		}
-		
+		if (bet.isWin()) {
+			throw new IllegalStateException("This bet has already won.");
+		}
+		if (!findBet(bet)) {
+			throw new IllegalStateException("This bet does not exist.");
+		}
+
 		if (bet.isWin()) {
 			int amount = bet.getAmount();
 			BetType type = bet.getBetType();
@@ -169,12 +187,12 @@ public class PlayerImpl implements Player {
 		} 
 		return false;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		return ( obj.equals(this) && obj.hashCode() == this.hashCode() ); // ?
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return id.hashCode() + name.hashCode() + points + availablePoints + initialPoints + totalBet;

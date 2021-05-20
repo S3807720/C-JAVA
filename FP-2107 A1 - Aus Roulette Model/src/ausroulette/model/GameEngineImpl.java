@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ausroulette.model.bet.Bet;
-import ausroulette.model.bet.BetType;
 import ausroulette.model.bet.ColorBet;
 import ausroulette.model.bet.ColorBetImpl;
 import ausroulette.model.bet.NumberBet;
@@ -47,10 +46,7 @@ public class GameEngineImpl implements GameEngine {
 
 	@Override
 	public Player addPlayer(String id, String name, int initialPoints) {
-		if (id == null || name == null) {
-			throw new NullPointerException();
-		}
-		if (id == "" || name == "" || 0 > initialPoints || players.get(id) != null) {
+		if (players.get(id) != null) {
 			throw new IllegalArgumentException();
 		}
 		Player player = new PlayerImpl(id, name, initialPoints);
@@ -58,17 +54,20 @@ public class GameEngineImpl implements GameEngine {
 		for (GameCallback logger : loggers) {
 			logger.playerAdded(player);
 		}
-
+		playerCount++;
 		return player;
 	}
 
 	@Override
 	public Player removePlayer(String id) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("This player does not exist.");
 		}
-		if (id == "" || players.get(id) == null || !players.get(id).getBets().isEmpty()) {
-			throw new IllegalArgumentException();
+		if (id == "" || players.get(id) == null) {
+			throw new IllegalArgumentException("This player does not exist.");
+		}
+		if (!players.get(id).getBets().isEmpty()) {
+			throw new IllegalArgumentException("Please remove this players bets first.");
 		}
 		Player player = players.get(id);
 		players.remove(id);
@@ -121,9 +120,8 @@ public class GameEngineImpl implements GameEngine {
 		if (bet == null) {
 			throw new NullPointerException();
 		}
-		Collection<Bet> bets = bet.getPlayer().getBets();
 		if (bet.isWin() || bet.getPlayer().getBets().isEmpty() == true) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("This bet has already won.");
 		}
 		bet.getPlayer().cancelBet(bet);
 		for (GameCallback logger : loggers) {
