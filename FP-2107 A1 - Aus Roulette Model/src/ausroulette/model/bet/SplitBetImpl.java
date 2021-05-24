@@ -17,15 +17,24 @@ public class SplitBetImpl implements SplitBet {
 		//sort for easier bet checking
 		Arrays.sort(numbers);
 		if (player == null || numbers == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Player and number cannot be empty.");
 		} 
-		
-		if (amount < 0 || numbers.length > 4 || numbers.length < 2 || !checkNums(numbers) 
-				|| (numbers.length == 2 ? !checkTwoSplit(numbers[0], numbers[1]) : !checkFourSplit(numbers[0],numbers[1], numbers[2], numbers[3]))) { 
-			throw new IllegalArgumentException();
+		if (amount < 0) { 
+			throw new IllegalArgumentException("You can't bet a negative number!");
+		}
+		if (numbers.length > 4 || numbers.length < 2) { 
+			throw new IllegalArgumentException("There are an invalid number of numbers for the bet. You must bet 2 or 4 numbers");
+		}
+		if (!checkNums(numbers)) { 
+			throw new IllegalArgumentException("Bets must be between 1 and 36.");
+		}
+		if ( (numbers.length == 2 ? !checkTwoSplit(numbers[0], numbers[1]) : !checkFourSplit(numbers[0],numbers[1], numbers[2], numbers[3]))) { 
+			throw new IllegalArgumentException("That is an invalid bet combination. "
+					+ "Split-four bets must be an adjacent square on the displayed board. "
+					+ "Split-two bets must be two adjacent tiles.");
 		}
 		if (player.getAvailablePoints() < amount) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("You do not have enough points for that.");
 		}
 		this.player = player;
 		this.amount = amount;
@@ -39,41 +48,12 @@ public class SplitBetImpl implements SplitBet {
 	
 	public SplitBetImpl(Player player, int amount, int number1, int number2) {
 		int[] temp = {number1, number2};
-		Arrays.sort(temp);
-		if (player == null) {
-			throw new NullPointerException();
-		} 
-		if (amount < 0 || !checkNums(temp) || (!checkTwoSplit(temp[0], temp[1])) ) { 
-			throw new IllegalArgumentException();
-		}
-
-		if (player.getAvailablePoints() < amount) {
-			throw new IllegalStateException();
-		}
-		this.player = player;
-		this.amount = amount;
-		this.numbers = temp;
-		Arrays.sort(numbers);
-		this.betType = BetType.SPLIT_2;
+		new SplitBetImpl(player, amount, temp);
 	}
 	
 	public SplitBetImpl(Player player, int amount, int number1, int number2, int number3, int number4) {
 		int[] temp = {number1, number2, number3, number4};
-		Arrays.sort(temp);
-		if (player == null) {
-			throw new NullPointerException();
-		} 
-		if (amount < 0 || !checkNums(temp) || (!checkFourSplit(temp[0], temp[1], temp[2], temp[3])) ) { 
-			throw new IllegalArgumentException();
-		}
-		if (player.getAvailablePoints() < amount) {
-			throw new IllegalStateException();
-		}
-		this.player = player;
-		this.amount = amount;
-		this.numbers = temp;
-		Arrays.sort(numbers);
-		this.betType = BetType.SPLIT_4;
+		new SplitBetImpl(player, amount, temp);
 	}
 	
 	private boolean checkNextAdjacent(int num1, int num2) {

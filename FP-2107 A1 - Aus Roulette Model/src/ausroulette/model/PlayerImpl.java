@@ -14,16 +14,16 @@ public class PlayerImpl implements Player {
 	private int totalBet = 0, currentBets = 0;
 
 	public PlayerImpl(String id, String name, int initialPoints) {
-		if (id.isBlank()) {
+		if (id == null) {
+			throw new NullPointerException("ID must not be empty.");
+		}if (name == null) {
+			throw new NullPointerException("Name must not be empty.");
+		}if (id.isBlank()) {
 			throw new IllegalArgumentException("ID must not be empty.");
 		}if (name.isBlank()) {
 			throw new IllegalArgumentException("Name must not be empty.");
 		}if (initialPoints < 0) {
 			throw new IllegalArgumentException("Points must not be empty.");
-		}if (id == null) {
-			throw new NullPointerException("Id must not be empty.");
-		}if (name == null) {
-			throw new NullPointerException("Name must not be empty.");
 		}
 		this.id = id;
 		this.name = name;

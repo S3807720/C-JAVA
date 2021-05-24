@@ -77,14 +77,6 @@ public class GameEngineImpl implements GameEngine {
 		return player;
 	}
 	
-	//iterate until ID is found
-	private String findId(String id) {
-		Player player = players.get(id);
-		if (player != null) {
-			return player.getId();
-		} 
-		return null;
-	}
 	
 	@Override
 	public Collection<Player> getAllPlayers() {
@@ -99,13 +91,16 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Player addPoints(String id, int points) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Id cannot be empty");
 		}
-		if (id == "" || 0 > points || players.get(id) == null) {
-			throw new IllegalArgumentException();
+		if (players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
-		if (findId(id) == null) {
-			return null;
+		if (0 > points) {
+			throw new IllegalArgumentException("Points cannot be negative.");
+		}
+		if (id == "") {
+			throw new IllegalArgumentException("Id cannot be empty.");
 		}
 		Player player = players.get(id);
 		players.get(id).addPoints(points);
@@ -118,7 +113,7 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public void cancelBet(Bet bet) {
 		if (bet == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Bet is invalid.");
 		}
 		if (bet.isWin() || bet.getPlayer().getBets().isEmpty() == true) {
 			throw new IllegalArgumentException("This bet has already won.");
@@ -193,11 +188,18 @@ public class GameEngineImpl implements GameEngine {
 	
 	@Override
 	public Bet placeNumberBet(String id, int amount, int number) {
+
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("ID cannot be empty.");
 		}
 		if (id == "" || 0 > amount || players.get(id) == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Bet amount must be positive.");
+		}
+		if (id == "") {
+			throw new IllegalArgumentException("ID cannot be empty.");
+		}
+		if (players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
 		if (players.get(id) != null) {
 			Bet existingBet = getCurrentNumBet(players.get(id), number);
@@ -250,10 +252,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Bet placeSplitBet(String id, int amount, int[] numbers) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Id cannot be empty");
 		}
-		if (id == "" || 0 > amount || players.get(id) == null) {
-			throw new IllegalArgumentException();
+		if (id == "" || players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
 		
 		if (players.get(id) != null) {
@@ -277,10 +279,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Bet placeSplitBet2(String id, int amount, int baseNumber) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Id cannot be empty");
 		}
-		if (id == "" || 0 > amount || players.get(id) == null) {
-			throw new IllegalArgumentException();
+		if (id == "" || players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
 		
 		if (players.get(id) != null) {
@@ -308,10 +310,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Bet placeSplitBet2(String id, int amount, int number1, int number2) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Id cannot be empty");
 		}
-		if (id == "" || 0 > amount || players.get(id) == null) {
-			throw new IllegalArgumentException();
+		if (id == "" || players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
 		
 		if (players.get(id) != null) {
@@ -335,10 +337,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Bet placeSplitBet4(String id, int amount, int baseNumber) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Id cannot be empty");
 		}
-		if (id == "" || 0 > amount || players.get(id) == null) {
-			throw new IllegalArgumentException();
+		if (id == "" || players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
 		
 		if (players.get(id) != null) {
@@ -369,10 +371,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Bet placeSplitBet4(String id, int amount, int number1, int number2, int number3, int number4) {
 		if (id == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("Id cannot be empty");
 		}
-		if (id == "" || 0 > amount || players.get(id) == null) {
-			throw new IllegalArgumentException();
+		if (id == "" || players.get(id) == null) {
+			throw new IllegalArgumentException("That player does not exist.");
 		}
 		
 		if (players.get(id) != null) {

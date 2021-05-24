@@ -2,6 +2,7 @@ package ausroulette.model.bet;
 
 import ausroulette.model.Player;
 import ausroulette.model.wheel.Pocket;
+import ausroulette.model.wheel.Wheel;
 
 public class NumberBetImpl implements NumberBet {
 	private Player player; 
@@ -10,17 +11,20 @@ public class NumberBetImpl implements NumberBet {
 	private Pocket winningPocket;
 	
 	public NumberBetImpl(Player player, int amount, int number) {
-		try {
-			this.player = player;
-		}	catch (NullPointerException n) {
-			
+		if (player == null) {
+			throw new NullPointerException("Invalid player.");
 		}
-		if (0 > amount || number > 30) {
-			throw new IllegalArgumentException();
+		if (0 > amount) {
+			throw new IllegalArgumentException("Bet amount must be positive.");
+		}
+		if (number > Wheel.LARGEST_NUMBER || number < 0) {
+			throw new IllegalArgumentException("That is an invalid pocket number.");
 		}
 		if (amount > player.getPoints()) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("You don't have enough points for that bet.");
 		}
+		this.player = player;
+
 		this.amount = amount;
 		this.number = number;
 		if (number == 0) {
