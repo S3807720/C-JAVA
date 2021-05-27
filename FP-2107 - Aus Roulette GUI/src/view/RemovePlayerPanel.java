@@ -16,8 +16,8 @@ import javax.swing.WindowConstants;
 
 import ausroulette.model.GameEngine;
 import ausroulette.model.Player;
-import listener.CloseActionListener;
-import listener.RemovePlayerActionListener;
+import controller.CloseActionListener;
+import controller.RemovePlayerActionListener;
 
 public class RemovePlayerPanel extends JFrame {
 	private JPanel panel;

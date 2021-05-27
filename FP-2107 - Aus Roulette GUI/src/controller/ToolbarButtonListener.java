@@ -1,18 +1,58 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 
-import ausroulette.model.Player;
+import javax.swing.Action;
 
-public class ToolbarButtonListener implements ActionListener {
-	Player player;
-	
-	public ToolbarButtonListener(Player player) {
-		this.player = player;
+import ausroulette.model.GameEngine;
+
+public class ToolbarButtonListener implements Action {
+
+
+	private GameEngine ge;
+
+	public ToolbarButtonListener(GameEngine ge) {
+		this.ge = ge;
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
-		//editLabel(player);
+		ge.spin(3, 3, 3);
+	}
+
+	@Override
+	public Object getValue(String key) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void putValue(String key, Object value) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setEnabled(boolean b) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +15,9 @@ import javax.swing.JSplitPane;
 
 import ausroulette.model.GameEngineImpl;
 import ausroulette.model.Player;
-import listener.BetInfoMouseListener;
+import controller.BetInfoMouseListener;
 
-public class PlayerSummaryPanel extends JPanel implements PropertyChangeListener {
+public class PlayerSummaryPanel extends JPanel {
 	private final String[] ICON_IMAGES = { "images/jack.png", "images/aang.png", "images/square.png", "images/giraffe.png" };
 	private static int counter = 0;
 	private static final long serialVersionUID = -1725754453212405795L;
@@ -128,12 +126,6 @@ public class PlayerSummaryPanel extends JPanel implements PropertyChangeListener
 		JLabel label = new JLabel(dets);
 		label.setHorizontalAlignment(JLabel.CENTER);
 		return label;
-	}
-
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-
 	}
 
 	public JSplitPane getMain() {

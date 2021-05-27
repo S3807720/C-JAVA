@@ -1,5 +1,268 @@
-[INFO] ausroulette.view.LoggerCallback playerRemoved
+[INFO] ausroulette.view.LoggerCallback spinStart
+      Spin #01 **Start** - Pocket: #0 GREEN
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #000 - Pocket: #0 GREEN
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #001 - Pocket: #32 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #002 - Pocket: #15 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #003 - Pocket: #19 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #004 - Pocket: #4 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #005 - Pocket: #21 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #006 - Pocket: #2 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #007 - Pocket: #25 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #008 - Pocket: #17 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #009 - Pocket: #34 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #010 - Pocket: #6 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #011 - Pocket: #27 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #012 - Pocket: #13 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #013 - Pocket: #36 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #014 - Pocket: #11 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #015 - Pocket: #30 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #016 - Pocket: #8 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #017 - Pocket: #23 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #018 - Pocket: #10 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #019 - Pocket: #5 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #020 - Pocket: #24 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #021 - Pocket: #16 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #022 - Pocket: #33 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #023 - Pocket: #1 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #024 - Pocket: #20 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #025 - Pocket: #14 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #026 - Pocket: #31 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #027 - Pocket: #9 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #028 - Pocket: #22 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #029 - Pocket: #18 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #030 - Pocket: #29 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #031 - Pocket: #7 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #032 - Pocket: #28 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #033 - Pocket: #12 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #034 - Pocket: #35 BLACK
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #035 - Pocket: #3 RED
+
+[FINE] ausroulette.view.LoggerCallback spinTick
+      Spin #01 Tick #036 - Pocket: #26 BLACK
+
+[INFO] ausroulette.view.LoggerCallback spinResult
+      Spin #01 *Result** - Pocket: #0 GREEN
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 12 on Black
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Red
+
+[INFO] ausroulette.view.LoggerCallback betResult
+           350 WON!! -- P1 bet 10 on Zero
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #3
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #2
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #4
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #5
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #8
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #9
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #13
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on Number #12
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on 4-way Split [1, 2, 4, 5]
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P1 bet 1 on 2-way Split [11, 12]
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+           350 WON ---- by Player P1
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+            23 LOSS --- by Player P1
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P1, Name: Mr Dollarbucks
+Points: 427, Available Points: 427
+Current Bets: 13, Total Bet: 33
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P2 bet 22 on Number #3
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P2
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+            22 LOSS --- by Player P2
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P2, Name: Testy 2
+Points: 28, Available Points: 28
+Current Bets: 1, Total Bet: 22
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P3
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 LOSS --- by Player P3
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
 Player ID: P3, Name: Testy
 Points: 50, Available Points: 50
 Current Bets: 0, Total Bet: 0
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P4 bet 22 on Number #3
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P4
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+            22 LOSS --- by Player P4
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P4, Name: Testy 3
+Points: 28, Available Points: 28
+Current Bets: 1, Total Bet: 22
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P5 bet 50 on 4-way Split [1, 2, 4, 5]
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P5
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+            50 LOSS --- by Player P5
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P5, Name: Testy 4
+Points: 0, Available Points: 0
+Current Bets: 1, Total Bet: 50
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P6 bet 22 on Number #7
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P6
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+            22 LOSS --- by Player P6
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P6, Name: Testy 5
+Points: 28, Available Points: 28
+Current Bets: 1, Total Bet: 22
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P7 bet 50 on 2-way Split [11, 12]
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P7
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+            50 LOSS --- by Player P7
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P7, Name: Testy 6
+Points: 0, Available Points: 0
+Current Bets: 1, Total Bet: 50
+
+[FINE] ausroulette.view.LoggerCallback betResult
+               LOSS  -- P8 bet 232 on Number #2
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+             0 WON ---- by Player P8
+
+[FINE] ausroulette.view.LoggerCallback spinPlayerTotal
+           232 LOSS --- by Player P8
+
+[INFO] ausroulette.view.LoggerCallback spinPlayerTotal
+Player ID: P8, Name: Testy 7
+Points: 318, Available Points: 318
+Current Bets: 1, Total Bet: 232
+
+[INFO] ausroulette.view.LoggerCallback spinHouseResult
+           350 WON ---- by All Players
+
+[INFO] ausroulette.view.LoggerCallback spinHouseResult
+           421 WON ---- by House
 

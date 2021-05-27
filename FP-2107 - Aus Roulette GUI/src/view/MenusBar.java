@@ -14,11 +14,11 @@ import javax.swing.border.Border;
 
 import ausroulette.model.GameEngine;
 import ausroulette.model.GameEngineImpl;
-import listener.AboutActionListener;
-import listener.AddPlayerButtonListener;
-import listener.ExitListener;
-import listener.RemovePlayerButtonListener;
-import listener.ToolbarButtonListener;
+import controller.AboutActionListener;
+import controller.AddPlayerButtonListener;
+import controller.ExitListener;
+import controller.RemovePlayerButtonListener;
+import controller.ToolbarButtonListener;
 
 
 public class MenusBar extends JMenuBar {
@@ -26,7 +26,7 @@ public class MenusBar extends JMenuBar {
 	private JMenuBar menu;
 	private GameEngine ge;
 	//placeholder listener
-	Action buttonAction = new ToolbarButtonListener();
+	Action buttonAction = new ToolbarButtonListener(ge);
 	
 	public MenusBar(GameEngineImpl ge) {
 		setLayout(new GridLayout());
@@ -43,14 +43,24 @@ public class MenusBar extends JMenuBar {
 	private JMenu createBetsMenus() {
 		JMenu fileMenu = new JMenu("Bets");
 		JMenuItem addBet = new JMenuItem("Add Bet");
-		setKey('a', addBet, buttonAction);
-		addBet.addActionListener(buttonAction);
+		setKey('a', addBet);
+		//addBet.addActionListener(buttonAction);
+		addBet.addActionListener( e-> {
+			new AddBetPanel(ge);
+		});
+		
 		JMenuItem cancelBet = new JMenuItem("Cancel bet");
-		setKey('c', cancelBet, buttonAction);
-		cancelBet.addActionListener(buttonAction);
+		setKey('c', cancelBet);
+		cancelBet.addActionListener( e-> {
+			new RemoveBetPanel(ge);
+		});
+		
 		JMenuItem viewBets = new JMenuItem("View bets");
-		setKey('v', viewBets, buttonAction);
-		viewBets.addActionListener(buttonAction);
+		setKey('v', viewBets);
+		viewBets.addActionListener( e-> {
+			new ViewBetsPanel(ge);
+		});
+		
 		fileMenu.add(addBet);
 		fileMenu.add(cancelBet);
 		fileMenu.add(viewBets);
@@ -60,23 +70,29 @@ public class MenusBar extends JMenuBar {
 	//menus for managing game
 	private JMenu createManageMenus() {
 		JMenu manageMenu = new JMenu("Manage game");
+		
 		JMenuItem addPlayer = new JMenuItem("Add Player");
 		addPlayer.addActionListener(new AddPlayerButtonListener(ge));
-		setKey('p', addPlayer, addPlayer.getAction());
+		setKey('p', addPlayer);
+		
 		JMenuItem remPlayer = new JMenuItem("Remove Player");
 		remPlayer.addActionListener(new RemovePlayerButtonListener(ge));
-		setKey('r', remPlayer, remPlayer.getAction());
+		setKey('r', remPlayer);
+		
 		JMenuItem addPoints = new JMenuItem("Add Points");
-		setKey('o', addPoints, buttonAction);
+		setKey('o', addPoints);
 		addPoints.addActionListener( e-> {
 			new AddPointsPanel(ge);
 		});
+		
 		JMenuItem end = new JMenuItem("Finish game");
-		setKey('f', end, buttonAction);
+		setKey('f', end);
 		end.addActionListener(buttonAction);
+		
 		JMenuItem spin = new JMenuItem("Spin");
-		setKey('s', spin, buttonAction);
+		setKey('s', spin);
 		spin.addActionListener(buttonAction);
+		
 		manageMenu.add(addPlayer);
 		manageMenu.add(remPlayer);
 		manageMenu.add(addPoints);
@@ -87,22 +103,26 @@ public class MenusBar extends JMenuBar {
 	//about, controls, quit
 	private JMenu createOtherMenus() {
 		JMenu otherMenu = new JMenu("Other");
+		
 		JMenuItem about = new JMenuItem("About");
 		about.addActionListener(new AboutActionListener());
-		setKey('i', about, about.getAction());
+		setKey('i', about);
+		
 		JMenuItem controls = new JMenuItem("Controls");
-		setKey('h', controls, buttonAction);
+		setKey('h', controls);
 		controls.addActionListener(buttonAction);
+		
 		JMenuItem exit = new JMenuItem("Exit");
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0));
 		exit.addActionListener(new ExitListener());
+		
 		otherMenu.add(about);
 		otherMenu.add(controls);
 		otherMenu.add(exit);
 		return otherMenu;
 	}
 
-	public void setKey(char key, JMenuItem item, Action buttonAction) {
+	public void setKey(char key, JMenuItem item) {
 		item.setAccelerator(KeyStroke.getKeyStroke(key));
 	}
 

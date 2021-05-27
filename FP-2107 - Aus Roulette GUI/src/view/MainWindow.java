@@ -29,13 +29,13 @@ public class MainWindow extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setSize(900,600);
-		setMinimumSize(new Dimension(600, 600));
-
+		setMinimumSize(new Dimension(600, 650));
+		wheelPanel = new WheelPanel(ge);
 		menu = new MenusBar(ge);
 		status = new StatusBar(ge);
-		toolbar = new Toolbar(ge);
+		toolbar = new Toolbar(ge, wheelPanel);
 		playerInfo = new PlayerSummaryPanel(ge);
-		wheelPanel = new WheelPanel(ge);
+		
 		betTable = new BettingTablePanel(ge);
 		testPlayers();
 		this.setJMenuBar(menu.getMenu());
@@ -114,4 +114,5 @@ public class MainWindow extends JFrame {
 		playerInfo.addPlayer(player7);
 		playerInfo.addPlayer(player8);
 	}
+
 }

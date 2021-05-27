@@ -1,22 +1,31 @@
 package client;
 
+import javax.swing.SwingUtilities;
+
 import ausroulette.model.GameEngineImpl;
+import ausroulette.view.LoggerCallback;
 import view.GuiCallback;
 import view.MainWindow;
-import ausroulette.view.LoggerCallback;
 
 public class GuiGameEngine {
 
 	public static void main(String[] args) {
-		GameEngineImpl ge = new GameEngineImpl();
-		
-		MainWindow menu = new MainWindow(ge);
-		GuiCallback gui = new GuiCallback(menu);
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				GameEngineImpl ge = new GameEngineImpl();
 
-		ge.registerCallback(gui);
-		ge.registerCallback(new LoggerCallback());
-		
-		menu.setVisible(true);
+				MainWindow menu = new MainWindow(ge);
+
+				ge.registerCallback(new GuiCallback(menu));
+				ge.registerCallback(new LoggerCallback());
+
+				menu.setVisible(true);
+			}
+		}); 
+
 	}
 
 }

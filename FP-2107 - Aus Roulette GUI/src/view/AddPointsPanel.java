@@ -22,7 +22,7 @@ import javax.swing.event.ChangeListener;
 
 import ausroulette.model.GameEngine;
 import ausroulette.model.Player;
-import listener.CloseActionListener;
+import controller.CloseActionListener;
 
 public class AddPointsPanel extends JFrame {
 	private JPanel panel;
@@ -68,16 +68,35 @@ public class AddPointsPanel extends JFrame {
 		JOptionPane pointPane = new JOptionPane();
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(0,1));
-		JTextArea numberEntry = new JTextArea("0");
+		JTextArea numberEntry = new JTextArea();
 		numberEntry.setPreferredSize(new Dimension(50,50));
 		JSlider slider = createSlider(numberEntry);
 		panel.add(slider);
 		panel.add(numberEntry);
 		pointPane.setMessage(panel);
-		pointPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
 		Dialog dialog = pointPane.createDialog(this, "Add Points");
 	    dialog.setVisible(true);
-	    ge.addPoints(player.getId(), Integer.parseInt(numberEntry.getText()));
+	    //if empty, close prompt
+	    if(!numberEntry.getText().trim().equals("")) {
+		    try {
+		    	if (Long.parseLong(numberEntry.getText()) > Integer.MAX_VALUE) {
+		    		throw new IllegalArgumentException("That number is too high!");
+		    	}
+		    	if (Integer.parseInt(numberEntry.getText()) < 0 ) { 
+		    		throw new IllegalArgumentException("Points must be over 0!");
+		    	}
+		    	if (JOptionPane.showConfirmDialog(null, String.format("Are you sure you want to add %d points to %s?", 
+			    		Integer.parseInt(numberEntry.getText()), player.getName()), 
+			    		"Confirm", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					ge.addPoints(player.getId(), Integer.parseInt(numberEntry.getText()));			
+				}
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "Must enter a valid whole number!");
+			} catch (IllegalArgumentException i) {
+				JOptionPane.showMessageDialog(null, i.getMessage());
+			}
+	    }
+	    
 	    
 	}
 	//optional slider
@@ -85,7 +104,7 @@ public class AddPointsPanel extends JFrame {
 		int minPoint, maxPoint;
 		minPoint = 0;
 		maxPoint = 500;
-		JSlider points = new JSlider(JSlider.HORIZONTAL, minPoint, maxPoint, maxPoint/2);
+		JSlider points = new JSlider(JSlider.HORIZONTAL, minPoint, maxPoint, minPoint);
 		points.setMajorTickSpacing(maxPoint);
 		points.setMinorTickSpacing(maxPoint/5);
 		points.setPaintTicks(true);

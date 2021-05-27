@@ -26,10 +26,10 @@ public class StatusBar extends JPanel implements PropertyChangeListener {
 
 		Border border = BorderFactory.createLineBorder(Color.BLACK);
 
-		statusFirst = new JLabel("Wowee! Player 17 bet 15 dollarydoos!", SwingConstants.LEFT);
+		statusFirst = new JLabel(" ", SwingConstants.LEFT);
 		statusFirst.setBorder(border);
 		statusFirst.setHorizontalAlignment(JLabel.CENTER);
-		statusSecond = new JLabel("Player Aang has given up.", SwingConstants.LEFT);
+		statusSecond = new JLabel(" ", SwingConstants.LEFT);
 		statusSecond.setBorder(border);
 		statusSecond.setHorizontalAlignment(JLabel.CENTER);
 		add(statusFirst);
@@ -38,14 +38,16 @@ public class StatusBar extends JPanel implements PropertyChangeListener {
 	}
 
 	public void updateText(String thing) {
-		statusFirst.setText("" + " triggered.");
+		statusFirst.setText(thing);
 	}
 
+	public void updateTwoText(String thing) {
+		statusSecond.setText(thing);
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		statusFirst.setText(evt.getNewValue() + " selected.");
-
-
 	}
 
 }

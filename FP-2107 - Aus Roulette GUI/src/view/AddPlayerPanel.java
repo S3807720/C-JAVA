@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import ausroulette.model.GameEngine;
-import listener.AddPlayerListener;
-import listener.CloseActionListener;
+import controller.AddPlayerListener;
+import controller.CloseActionListener;
 
 public class AddPlayerPanel extends JFrame {
 	private JPanel panel, playerIcons, buttons;
@@ -28,7 +28,6 @@ public class AddPlayerPanel extends JFrame {
 	private JFrame frame;
 	private ButtonGroup icons;
 	private GameEngine ge;
-	private String icon;
 	/**
 	 * 
 	 */
