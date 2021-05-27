@@ -131,8 +131,8 @@ public class PlayerImpl implements Player {
 		if (this.equals(bet.getPlayer()) == false ) {
 			throw new IllegalArgumentException("This bet doesn't belong to this player.");
 		}
-		if (bet.isWin()) {
-			throw new IllegalStateException("This bet has already won.");
+		if (bet.getWinningPocket() == null) {
+			throw new IllegalStateException("This bet has not been finalized.");
 		}
 		if (!findBet(bet)) {
 			throw new IllegalStateException("This bet does not exist.");
@@ -158,7 +158,7 @@ public class PlayerImpl implements Player {
 		} else {
 			this.points -= bet.getAmount();
 		}
-
+		
 	}
 
 	@Override

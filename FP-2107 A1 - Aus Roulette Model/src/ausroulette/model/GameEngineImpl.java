@@ -411,10 +411,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Pocket spinToWin(int ticks, int delay) {
 		if (1 > ticks|| 0 > delay || delay > MAX_SPIN_DELAY) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("These shouldn't ever trigger...");
 		}
 		if (players.isEmpty() || !getTotalBets()) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("No bets or players.");
 		}
 		
 		
@@ -436,10 +436,10 @@ public class GameEngineImpl implements GameEngine {
 	@Override
 	public Pocket spinToWin(int ticks, int delay, int startingNumber) {
 		if (1 > ticks|| 0 > delay || delay > MAX_SPIN_DELAY || Wheel.NUMBER_OF_POCKETS > ticks) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("These shouldn't ever trigger...");
 		}
 		if (players.isEmpty() || !getTotalBets()) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("No bets or players.");
 		}
 		Pocket pocket = spin(ticks, delay, startingNumber);
 		applyWinLoss(spinCount, pocket);
@@ -448,10 +448,15 @@ public class GameEngineImpl implements GameEngine {
 
 	@Override
 	public Pocket spin(int ticks, int delay, int startingNumber) {
-		if (1 > ticks|| 0 > delay || delay > MAX_SPIN_DELAY) {
-			throw new IllegalArgumentException();
+		if (1 > ticks) {
+			throw new IllegalArgumentException("Must be more than 1 tick per spin.");
 		}
-		
+		if (0 > delay) {
+			throw new IllegalArgumentException("The delay cannot be negative.");
+		}
+		if (delay > MAX_SPIN_DELAY) {
+			throw new IllegalArgumentException("The delay is too high.");
+		}
 		spinCount++;
 		Pocket pocket = gameWheel.moveToNumber(startingNumber);
 		for (GameCallback logger : loggers) {
@@ -494,11 +499,11 @@ public class GameEngineImpl implements GameEngine {
 				}
 			}
 			allPlayerTotalLoss += playerLoss;
-			allPlayerTotalWin += playerWin;
-			plays.resetBets();
+			allPlayerTotalWin += playerWin;			
 			for (GameCallback logger : loggers) {
 				logger.spinPlayerTotal(spinNumber, plays, bets, playerWin, playerLoss);
 			}
+			plays.resetBets();
 		}
 		for (GameCallback logger : loggers) {
 			logger.spinHouseResult(spinNumber, allPlayerTotalWin, allPlayerTotalLoss);

@@ -13,11 +13,11 @@ public class ColorBetImpl implements ColorBet {
 	
 	public ColorBetImpl(Player player, int amount, PocketColor color) {
 		if (player == null || color == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("This can't be reached but something is empty!");
 		} else if (amount < 0 || (color != PocketColor.BLACK && color != PocketColor.RED)) { 
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Bet amount can't be negative!"); //no green bets accepted
 		} else if (player.getAvailablePoints() < amount) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("You don't have enough points for that bet.");
 		}
 		this.player = player;
 		this.amount = amount;
@@ -82,7 +82,7 @@ public class ColorBetImpl implements ColorBet {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		return ( obj.equals(this) && obj.hashCode() == this.hashCode() ); // ?
+		return ( obj.hashCode() == this.hashCode() ); // ?
 	}
 	
 	public int hashCode() {

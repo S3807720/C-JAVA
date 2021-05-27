@@ -88,7 +88,7 @@ public class NumberBetImpl implements NumberBet {
 	
 	@Override
 	public boolean equals(Object obj) {
-		return ( obj.equals(this) && obj.hashCode() == this.hashCode() ); // ?
+		return ( obj.hashCode() == this.hashCode() ); // ?
 	}
 	
 	public int hashCode() {
