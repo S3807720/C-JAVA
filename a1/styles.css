@@ -1,0 +1,159 @@
+/* ////////////////////////////////////////////////////////////////////////////
+/
+/    'Reset' and font import
+/
+////////////////////////////////////////////////////////////////////////////*/
+
+/* set default values for everything and smooth scrolling */
+html, body {
+  scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+#navLinks a:last-child {
+  cursor: pointer;
+}
+
+/* ////////////////////////////////////////////////////////////////////////////
+/
+/    General CSS & Index styles
+/
+////////////////////////////////////////////////////////////////////////////*/
+
+/* set overall font type and style with text-shadows to make text more readable */
+* {
+  color: #fff;
+  box-sizing: border-box;
+  text-shadow: 0 0 1px rgba(0,0,0,1), 0 0 1px #000;
+}
+
+body {
+  z-index: 1;
+  background-color: rgba(120, 64, 49, 1);
+}
+
+/* set a low opacity background image */
+body::before{
+  content: "";
+  /*"Table In Vintage Restaurant". Pexels.Com, 2021. https://www.pexels.com/photo/table-in-vintage-restaurant-6267.*/
+  background:url("images/pexels-kaboompics-com-6267.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: cover;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0.1;
+  z-index: -5;
+}
+
+/* generic container sizing as to keep everything consistent */
+main {
+  display:block;
+  align-self: center;
+  position: relative;
+  margin: 0 auto;
+  max-width: 70%;
+  font-size: 16px;
+}
+
+#smoke {
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 40%;
+  opacity: 0.5;
+  z-index: -5;
+}
+
+#coffImg {
+  float: right;
+}
+
+#results {
+  visibility: hidden;
+  margin-top: 20px;
+  padding: 10px;
+  background: brown;
+  border: solid black 2px;
+  opacity: 0.8;
+}
+#results p {
+  line-height: 3px;
+  display: block;
+}
+#results p, #results h3, #results h4 {
+    color: black ;
+}
+#expCoffee {
+  margin-bottom: 10px;
+}
+
+main label, #cheapCoff, #expCoffee {
+  min-width: 100%;
+}
+.coffeeCost {
+  min-width: 300px;
+  margin-bottom: 100px;
+}
+.coffeePerDay td, .coffeePerDayInput input {
+  height: 30px;
+}
+
+input {
+  color: black;
+}
+
+.coffeePerDayInput input {
+  width: 55%;
+}
+
+#coffMessage {
+  font-size: 30px;
+  margin: 0 auto;
+  width: 60%;
+  display: block;
+  padding: 10px;
+}
+#calculate, #retry {
+  color: black;
+  min-height: 40px;
+  width: 30%;
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px;
+  z-index: 6550;
+}
+
+/* heading styles */
+h2 {
+  font-family: 'PTSerif-Bold';
+  text-align: center;
+  font-size:30px;
+  padding: 20px 0px;
+}
+
+.active {
+  background-color: rgba(0,0,0,0.1);
+}
+
+/* ////////////////////////////////////////////////////////////////////////////
+/
+/    Media Queries & Nav bar
+/
+////////////////////////////////////////////////////////////////////////////*/
+/* tablet and small desktop screens, change menu to be toggle and resize certain elements */
+@media only screen and (max-width: 959px) {
+  .container, #home {
+    margin: 10px;
+  }
+}

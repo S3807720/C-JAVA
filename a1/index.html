@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="This site allows coffee addicts to estimate how much they spend each month
+  or year on coffee. They really need help. :(">
+  <meta name="keywords" content="Coffee Estimator">
+  <meta name="author" content="Luke Smith">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Coffee Estimator</title>
+  <link id='stylecss' type="text/css" rel="stylesheet" href="styles.css">
+  <script src='main.js'></script>
+  <!-- "Interactive Smoke Effect With Javascript And Canvas - Smoke.Js | CSS Script". CSS Script, 2021. https://www.cssscript.com/interactive-smoke-effect-javascript-canvas-smoke-js/. -->
+  <script src="smoke.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <h2>Coffee Estimator</h2>
+  </header>
+
+  <main>
+    <div id="coffeeCost">
+      <label>Cheapest Coffee:</label>
+      <input type="text" id="cheapCoff" name="cheapCoff" placeholder="$0">
+      <label>Most Expensive Coffee:</label>
+      <input type="text" id="expCoffee" name="expCoffee" placeholder="$0">
+      <label id="numCoffees">  Enter the number of coffees you purchased on... </label>
+
+    </div>
+    <table id="form">
+      <tbody>
+          <tr class="coffeePerDay">
+            <td>Monday:</td>
+            <td>Tuesday:</td>
+            <td>Wednesday:</td>
+            <td>Thursday:</td>
+            <td>Friday:</td>
+            <td>Saturday:</td>
+            <td>Sunday:</td>
+          </tr>
+
+          <tr class="coffeePerDayInput">
+            <td>
+              <input type="text" class="day" name="monday" value="0">
+            </td><td>
+              <input type="text" class="day" name="tuesday" value="0">
+            </td><td>
+              <input type="text" class="day" name="wednesday" value="0">
+            </td><td>
+              <input type="text" class="day" name="thursday" value="0">
+            </td><td>
+              <input type="text" class="day" name="friday" value="0">
+            </td><td>
+              <input type="text" class="day" name="saturday" value="0">
+            </td><td>
+              <input type="text" class="day" name="sunday" value="0">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div>
+        <button onclick="calculate()" id="calculate">Calculate Cost</button>
+      </div>
+
+
+
+    <section id="results">
+      <img id="coffImg" src="images/coffeeNormal.png" alt=" image result of coffee calculation">
+
+      <p id="avgCoff"></p>
+      <p id="coffPerYear"></p>
+      <p id="coffPerMonth"></p>
+
+      <h4> Costs per month </h4>
+      <p id="monthMostExp"></p>
+      <p id="monthCheapest"></p>
+      <p id="monthAvg"></p>
+
+      <h4> Costs per year </h4>
+      <p id="yearMostExp"></p>
+      <p id="yearCheapest"></p>
+      <p id="yearAvg"></p>
+      <h3 id="coffMessage"></h3>
+      <button onclick="showInput()" id="retry">Retry</button>
+    </section>
+
+  </main>
+  <!-- smoke animation -->
+  <canvas id="smoke"></canvas>
+</body>
